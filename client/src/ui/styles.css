@@ -1112,7 +1112,7 @@ a {
   border-radius: 14px;
   padding: 12px;
   display: grid;
-  grid-template-columns: 1fr 260px auto;
+  grid-template-columns: 1fr auto;
   gap: 10px;
   align-items: center;
 }

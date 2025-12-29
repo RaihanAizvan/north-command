@@ -6,7 +6,8 @@ type Elf = { _id: string; username: string; role: 'FIELD_AGENT'; createdAt: stri
 export default function ElfManagementPage() {
   const { token } = useAuthStore();
   const [elves, setElves] = useState<Elf[]>([]);
-  const [pw, setPw] = useState<Record<string, string>>({});
+  const [modalElf, setModalElf] = useState<Elf | null>(null);
+  const [modalTasks, setModalTasks] = useState<Array<{ _id: string; title: string; status: string }> | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -24,16 +25,12 @@ export default function ElfManagementPage() {
     setElves((prev) => prev.filter((e) => e._id !== elfId));
   }
 
-  async function resetPassword(elfId: string) { 
+  async function viewTasks(elf: Elf) {
     if (!token) return;
-    const password = pw[elfId] ?? '';
-    if (!password.trim()) return;
-    await fetch(`/api/admin/elves/${elfId}/reset-password`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
-    });
-    setPw((p) => ({ ...p, [elfId]: '' }));
+    setModalElf(elf);
+    setModalTasks(null);
+    const list = await fetch(`/api/admin/elves/${elf._id}/tasks`, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json());
+    setModalTasks(list);
   }
 
   return (
@@ -45,10 +42,9 @@ export default function ElfManagementPage() {
             <div className="elfName">{e.username}</div>
             <div className="elfSub">Created: {new Date(e.createdAt).toLocaleDateString()}</div>
           </div>
-          <input className="input" value={pw[e._id] ?? ''} onChange={(ev) => setPw((p) => ({ ...p, [e._id]: ev.target.value }))} placeholder="New password" />
           <div className="elfActions">
-            <button className="btn" onClick={() => void resetPassword(e._id)}>
-              Reset
+            <button className="btn" onClick={() => void viewTasks(e)}>
+              View tasks
             </button>
             <button className="btn btnDanger" onClick={() => void deleteElf(e._id)}>
               Delete
@@ -56,6 +52,46 @@ export default function ElfManagementPage() {
           </div>
         </div>
       ))}
+
+      {modalElf ? (
+        <div className="msgOverlay" onClick={() => setModalElf(null)}>
+          <div className="msgCard" onClick={(ev) => ev.stopPropagation()}>
+            <div className="overlayPanel">
+              <div className="overlayHeader">
+                <div className="overlayTitle">Tasks for {modalElf.username}</div>
+                <button className="iconBtn" onClick={() => setModalElf(null)} aria-label="Close">
+                  ✕
+                </button>
+              </div>
+              <div className="overlayBody">
+                <div className="inboxList">
+                  {!modalTasks ? (
+                    <div className="inboxEmpty">Loading…</div>
+                  ) : modalTasks.length === 0 ? (
+                    <div className="inboxEmpty">No tasks assigned.</div>
+                  ) : (
+                    modalTasks.map((t) => (
+                      <div key={t._id} className="inboxItem">
+                        <div className="inboxIcon" aria-hidden>
+                          {t.status === 'COMPLETED' ? 'D' : t.status === 'IN_PROGRESS' ? 'P' : 'O'}
+                        </div>
+                        <div className="inboxBody">
+                          <div className="inboxTop">
+                            <div className="inboxType">{t.status}</div>
+                          </div>
+                          <div className="inboxMsg" style={{ display: 'block', color: 'rgba(232,240,255,0.9)' }}>
+                            {t.title}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -1,6 +1,4 @@
-import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
-import { z } from 'zod';
 import { Task } from '../models/Task.js';
 import { User } from '../models/User.js';
 import { Notification } from '../models/Notification.js';
@@ -59,8 +57,6 @@ export async function listElvesAdmin(_req: any, res: any) {
   res.json(elves.map((e) => ({ _id: e._id.toString(), username: e.username, role: e.role, createdAt: e.createdAt })));
 }
 
-const resetSchema = z.object({ password: z.string().min(4).max(128) });
-
 export async function deleteElf(req: any, res: any) {
   const elfId = req.params.elfId as string;
   if (!mongoose.isValidObjectId(elfId)) throw new HttpError(400, 'Invalid elfId');
@@ -85,18 +81,26 @@ export async function deleteElf(req: any, res: any) {
   res.json({ ok: true });
 }
 
-export async function resetElfPassword(req: any, res: any) {
+export async function listElfTasks(req: any, res: any) {
   const elfId = req.params.elfId as string;
   if (!mongoose.isValidObjectId(elfId)) throw new HttpError(400, 'Invalid elfId');
 
-  const input = resetSchema.parse(req.body);
-
-  const elf = await User.findById(elfId);
+  const elf = await User.findById(elfId).select({ _id: 1, role: 1 }).lean();
   if (!elf) throw notFound('Elf not found');
   if (elf.role !== 'FIELD_AGENT') throw new HttpError(400, 'Target is not a field agent');
 
-  elf.passwordHash = await bcrypt.hash(input.password, 10);
-  await elf.save();
+  const tasks = await Task.find({ assigneeUserId: elf._id })
+    .sort({ createdAt: -1 })
+    .select({ title: 1, status: 1, createdAt: 1, updatedAt: 1 })
+    .lean();
 
-  res.json({ ok: true });
+  res.json(
+    tasks.map((t) => ({
+      _id: t._id.toString(),
+      title: t.title,
+      status: t.status,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+    }))
+  );
 }
