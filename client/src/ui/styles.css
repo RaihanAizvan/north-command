@@ -1098,6 +1098,25 @@ a {
 
 .rowEnd { display: flex; justify-content: flex-end; }
 
+.analyticsGrid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 980px) {
+  .analyticsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .analyticsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 980px) {
   .dashGrid { grid-template-columns: 1fr; }
   .scroll { max-height: 420px; }
