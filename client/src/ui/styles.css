@@ -1105,6 +1105,35 @@ a {
   gap: 10px;
 }
 
+/* Elf management responsive rows */
+.elfRow {
+  border: 1px solid rgba(255,255,255,0.06);
+  background: #0b1018;
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr 260px auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.elfMeta { min-width: 0; }
+.elfName { font-weight: 900; }
+.elfSub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+.elfActions { display: inline-flex; gap: 8px; justify-content: flex-end; }
+
+@media (max-width: 980px) {
+  .elfRow {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .elfActions {
+    justify-content: flex-start;
+  }
+}
+
 @media (max-width: 980px) {
   .analyticsGrid {
     grid-template-columns: repeat(2, 1fr);
