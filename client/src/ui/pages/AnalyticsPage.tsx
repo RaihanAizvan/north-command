@@ -3,7 +3,7 @@ import { useAuthStore } from '../state/auth';
 
 type Analytics = {
   tasks: { total: number; open: number; inProgress: number; completed: number };
-  elves: Array<{ userId: string; username: string; openCount: number }>;
+  elves: Array<{ userId: string; username: string; openCount: number; doneCount: number }>;
   notifications: { unread: number };
 };
 
@@ -34,14 +34,23 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="card">
-        <div className="panelTitle">Elves (open tasks)</div>
+        <div className="panelTitle">Elves performance</div>
         <div className="stack">
-          {data.elves.map((e) => (
-            <div key={e.userId} className="card" style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
-              <div style={{ fontWeight: 900 }}>{e.username}</div>
-              <div style={{ color: 'var(--muted)' }}>{e.openCount}</div>
-            </div>
-          ))}
+          {data.elves.map((e) => {
+            const max = Math.max(1, ...data.elves.map((x) => x.doneCount));
+            const w = Math.round((e.doneCount / max) * 100);
+            return (
+              <div key={e.userId} className="card" style={{ display: 'grid', gridTemplateColumns: '140px 1fr 120px', gap: 10, alignItems: 'center' }}>
+                <div style={{ fontWeight: 900, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.username}</div>
+                <div style={{ height: 10, borderRadius: 999, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                  <div style={{ width: `${w}%`, height: '100%', background: 'rgba(255,77,77,0.70)' }} />
+                </div>
+                <div style={{ color: 'var(--muted)', textAlign: 'right' }}>
+                  Done: {e.doneCount} · Open: {e.openCount}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
