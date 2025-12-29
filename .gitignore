@@ -2,6 +2,7 @@ node_modules
 .history
 .env
 .env.*
+!server/.env.example
 dist
 client/dist
 server/dist
