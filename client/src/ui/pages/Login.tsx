@@ -165,7 +165,7 @@ export default function Login() {
           <div
             className="sigilPortrait"
             style={{
-              transform: `translate(${gaze.x * 1.2}px, ${gaze.y * 1.2}px) rotateX(${(-gaze.y * 0.4).toFixed(2)}deg) rotateY(${(gaze.x * 0.4).toFixed(2)}deg)`,
+              transform: `translate3d(${gaze.x * 0.35}px, ${gaze.y * 0.35}px, 0) rotateX(${(-gaze.y * 0.75).toFixed(2)}deg) rotateY(${(gaze.x * 0.75).toFixed(2)}deg)`,
             }}
           >
             <img key={`${portrait}-${portraitNonce}`} className={portraitAnim} src={portrait} alt="" draggable={false} />
