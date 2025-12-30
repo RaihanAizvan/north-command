@@ -41,7 +41,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x030406, 4.5, 18);
+    scene.fog = new THREE.Fog(0x010102, 4.0, 16);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.set(0, 1.6, 5.8);
@@ -51,10 +51,10 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     scene.add(root);
 
     // Lights: dark ops with subtle holiday accents
-    const amb = new THREE.AmbientLight(0xffffff, 0.28);
+    const amb = new THREE.AmbientLight(0xffffff, 0.18);
     scene.add(amb);
 
-    const key = new THREE.DirectionalLight(0xcfe3ff, 1.0);
+    const key = new THREE.DirectionalLight(0xcfe3ff, 1.15);
     key.position.set(3.5, 6.5, 4.2);
     scene.add(key);
 
@@ -63,11 +63,11 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     scene.add(fill);
 
     // Accent red/green rim lights (light Christmas vibe)
-    const rimRed = new THREE.PointLight(0xff3344, 0.85, 12, 2);
+    const rimRed = new THREE.PointLight(0xff3344, 0.95, 12, 2);
     rimRed.position.set(-3.2, 1.2, 2.6);
     scene.add(rimRed);
 
-    const rimGreen = new THREE.PointLight(0x20ff9a, 0.65, 12, 2);
+    const rimGreen = new THREE.PointLight(0x20ff9a, 0.72, 12, 2);
     rimGreen.position.set(3.0, 1.0, 2.2);
     scene.add(rimGreen);
 
@@ -179,7 +179,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     // Background: aurora-like haze + stars (non-plain, still dark-premium)
     const haze = new THREE.Mesh(
       new THREE.PlaneGeometry(40, 24),
-      new THREE.MeshBasicMaterial({ color: 0x03040a, transparent: true, opacity: 0.72 })
+      new THREE.MeshBasicMaterial({ color: 0x010103, transparent: true, opacity: 0.86 })
     );
     haze.position.set(0, 3.2, -10);
     root.add(haze);
@@ -197,7 +197,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     const auroraMat = new THREE.MeshBasicMaterial({
       map: auroraTex,
       transparent: true,
-      opacity: 0.42,
+      opacity: 0.28,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
@@ -242,7 +242,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       starPos[i * 3 + 2] = -12 - Math.random() * 20;
     }
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    const starMat = new THREE.PointsMaterial({ color: 0xbfd7ff, size: 0.02, transparent: true, opacity: 0.28, depthWrite: false });
+    const starMat = new THREE.PointsMaterial({ color: 0x9fb7d6, size: 0.018, transparent: true, opacity: 0.16, depthWrite: false });
     const stars = new THREE.Points(starGeo, starMat);
     root.add(stars);
 
@@ -260,9 +260,9 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     snowGeo.setAttribute('position', new THREE.BufferAttribute(snowPos, 3));
     const snowMat = new THREE.PointsMaterial({
       color: 0xffffff,
-      size: 0.025,
+      size: 0.024,
       transparent: true,
-      opacity: 0.38,
+      opacity: 0.22,
       depthWrite: false,
     });
     const snow = new THREE.Points(snowGeo, snowMat);
