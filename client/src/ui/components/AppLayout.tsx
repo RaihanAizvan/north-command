@@ -46,6 +46,7 @@ export default function AppLayout() {
   const [notifCount, setNotifCount] = useState(0);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [snow, setSnow] = useState<SnowIntensity>(() => (typeof window === 'undefined' ? 'medium' : getSavedSnow()));
+  const [loadingPeers, setLoadingPeers] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -58,12 +59,17 @@ export default function AppLayout() {
     if (!token) return;
     let stop = false;
     (async () => {
-      if (role === 'OVERSEER') {
-        const list = await authGet<{ _id: string; username: string; role: 'FIELD_AGENT' }[]>('/api/tasks/elves', token);
-        if (!stop) setPeers(list.map((x) => ({ _id: x._id, username: x.username })));
-      } else if (role === 'FIELD_AGENT') {
-        const santa = await authGet<{ _id: string; username: string }>('/api/chat/overseer', token);
-        if (!stop) setPeers([santa]);
+      setLoadingPeers(true);
+      try {
+        if (role === 'OVERSEER') {
+          const list = await authGet<{ _id: string; username: string; role: 'FIELD_AGENT' }[]>('/api/tasks/elves', token);
+          if (!stop) setPeers(list.map((x) => ({ _id: x._id, username: x.username })));
+        } else if (role === 'FIELD_AGENT') {
+          const santa = await authGet<{ _id: string; username: string }>('/api/chat/overseer', token);
+          if (!stop) setPeers([santa]);
+        }
+      } finally {
+        if (!stop) setLoadingPeers(false);
       }
     })().catch(() => {});
     return () => {
@@ -303,6 +309,17 @@ export default function AppLayout() {
           <div className="sidebarSection">
             <div className="sidebarSectionHeader">Direct Messages</div>
             <div className="sidebarList">
+              {loadingPeers ? (
+                <div className="card" style={{ padding: 10, display: 'grid', placeItems: 'center' }}>
+                  <div className="spinSanta" aria-hidden>
+                    <div className="spinRing" />
+                    <div className="spinHat">
+                      <div className="spinHatTrim" />
+                      <div className="spinHatPom" />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               {peers.map((p: Peer) => (
                 <button
                   className="sidebarDm"

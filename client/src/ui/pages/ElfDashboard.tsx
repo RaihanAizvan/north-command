@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore } from '../state/auth';
 
@@ -60,6 +61,7 @@ async function patchJson<T>(url: string, token: string, body: unknown): Promise<
 
 export default function ElfDashboard() {
   const { token, clear } = useAuthStore();
+  const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -81,12 +83,15 @@ export default function ElfDashboard() {
 
   useEffect(() => {
     if (!token) return;
+    setLoading(true);
     (async () => {
       const myTasks = await getJson<Task[]>('/api/tasks/my', token);
       const myNotifications = await getJson<Notification[]>('/api/notifications', token);
       setTasks(myTasks);
       setNotifications(myNotifications);
-    })().catch(() => clear());
+    })()
+      .catch(() => clear())
+      .finally(() => setLoading(false));
   }, [token, clear]);
 
   useEffect(() => {
@@ -140,6 +145,10 @@ export default function ElfDashboard() {
   }
 
   if (!token) return null;
+
+  if (loading) {
+    return <LoadingSpinner label="Loading console" />;
+  }
 
   return (
     <div className="container" style={{ maxWidth: 1100 }}>
