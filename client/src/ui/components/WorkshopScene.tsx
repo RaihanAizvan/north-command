@@ -41,7 +41,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x050607, 5, 20);
+    scene.fog = new THREE.Fog(0x030406, 4.5, 18);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.set(0, 1.6, 5.8);
@@ -51,7 +51,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     scene.add(root);
 
     // Lights: dark ops with subtle holiday accents
-    const amb = new THREE.AmbientLight(0xffffff, 0.35);
+    const amb = new THREE.AmbientLight(0xffffff, 0.28);
     scene.add(amb);
 
     const key = new THREE.DirectionalLight(0xcfe3ff, 1.0);
@@ -179,7 +179,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     // Background: aurora-like haze + stars (non-plain, still dark-premium)
     const haze = new THREE.Mesh(
       new THREE.PlaneGeometry(40, 24),
-      new THREE.MeshBasicMaterial({ color: 0x060912, transparent: true, opacity: 0.55 })
+      new THREE.MeshBasicMaterial({ color: 0x03040a, transparent: true, opacity: 0.72 })
     );
     haze.position.set(0, 3.2, -10);
     root.add(haze);
@@ -197,7 +197,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     const auroraMat = new THREE.MeshBasicMaterial({
       map: auroraTex,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.42,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
@@ -242,7 +242,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       starPos[i * 3 + 2] = -12 - Math.random() * 20;
     }
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    const starMat = new THREE.PointsMaterial({ color: 0xd8e7ff, size: 0.02, transparent: true, opacity: 0.45, depthWrite: false });
+    const starMat = new THREE.PointsMaterial({ color: 0xbfd7ff, size: 0.02, transparent: true, opacity: 0.28, depthWrite: false });
     const stars = new THREE.Points(starGeo, starMat);
     root.add(stars);
 
@@ -262,7 +262,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       color: 0xffffff,
       size: 0.025,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.38,
       depthWrite: false,
     });
     const snow = new THREE.Points(snowGeo, snowMat);
