@@ -2100,19 +2100,22 @@ a {
   left: 0;
   right: 0;
   z-index: 10;
-  padding: 0 18px;
+  display: flex;
+  justify-content: center;
+  padding: 0;
   pointer-events: none;
 }
 
 .landingTopNavInner {
   /* Dynamic-island / liquid glass pill */
-  max-width: min(720px, calc(100vw - 36px));
+  max-width: min(360px, calc(100vw - 24px));
+  transition: max-width 600ms cubic-bezier(0.2, 0.9, 0.15, 1), box-shadow 600ms ease, border-color 600ms ease;
   margin: 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 12px 16px;
+  gap: 10px;
+  padding: 7px 10px;
   border-radius: 999px;
   position: relative;
 
@@ -2168,6 +2171,27 @@ a {
   100% { transform: translateX(12%) rotate(360deg); }
 }
 
+/* Dynamic island morph by section mode */
+.landingGiulio[data-mode='HERO'] .landingTopNavInner {
+  max-width: min(390px, calc(100vw - 24px));
+  border-color: rgba(255,255,255,0.12);
+}
+
+.landingGiulio[data-mode='PLAN'] .landingTopNavInner {
+  max-width: min(360px, calc(100vw - 24px));
+  border-color: rgba(32,255,154,0.18);
+}
+
+.landingGiulio[data-mode='REVIEW'] .landingTopNavInner {
+  max-width: min(380px, calc(100vw - 24px));
+  border-color: rgba(255,176,32,0.18);
+}
+
+.landingGiulio[data-mode='CELEBRATE'] .landingTopNavInner {
+  max-width: min(350px, calc(100vw - 24px));
+  border-color: rgba(255,51,68,0.18);
+}
+
 .landingNavSci {
   position: relative;
   display: inline-flex;
@@ -2177,14 +2201,14 @@ a {
 }
 
 .landingNavLink {
-  font-family: var(--font-accent);
+  font-family: var(--font-display-b);
   font-weight: 400;
-  letter-spacing: 2.2px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  font-size: 12px;
+  font-size: 10px;
   text-decoration: none;
   color: rgba(255,255,255,0.76);
-  padding: 8px 10px;
+  padding: 6px 7px;
   border-radius: 999px;
   position: relative;
 }
@@ -2205,35 +2229,47 @@ a {
   background: rgba(255,255,255,0.05);
 }
 
+/* active nav item */
+.landingNavLink[aria-current='page'] {
+  color: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.06);
+}
+
+.landingNavLink[aria-current='page']::after {
+  background: linear-gradient(90deg, rgba(32,255,154,0), rgba(32,255,154,0.85), rgba(32,255,154,0));
+  opacity: 1;
+}
+
 .landingNavLink:hover::after {
   background: linear-gradient(90deg, rgba(255,176,32,0), rgba(255,176,32,0.75), rgba(255,176,32,0));
   opacity: 0.9;
 }
 
 .landingTopNavInnerEdge {
-  max-width: auto;
+  /* keep island centered */
+  max-width: min(360px, calc(100vw - 24px));
   justify-content: center;
 }
 
 .landingTopCta {
   text-decoration: none;
-  font-family: var(--font-accent);
-  padding: 10px 14px;
+  font-family: var(--font-display-b);
+  padding: 6px 8px;
   border-radius: 999px;
-  border: 1px solid rgba(255,176,32,0.28);
+  border: 1px solid rgba(255,51,68,0.35);
   background:
-    radial-gradient(80px 50px at 20% 20%, rgba(255,255,255,0.10), rgba(255,255,255,0)),
-    linear-gradient(180deg, rgba(255,176,32,0.12), rgba(0,0,0,0.10));
-  color: rgba(255,255,255,0.92);
+    radial-gradient(90px 60px at 20% 20%, rgba(255,255,255,0.10), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255,51,68,0.16), rgba(0,0,0,0.14));
+  color: rgba(255,255,255,0.94);
   font-weight: 400;
-  letter-spacing: 2.2px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.45);
   position: relative;
   z-index: 1;
 }
 
-.landingTopCta:hover { background: rgba(255,176,32,0.16); }
+.landingTopCta:hover { background: rgba(255,51,68,0.22); }
 
 .landingScroll {
   position: relative;
