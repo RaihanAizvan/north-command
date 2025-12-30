@@ -2105,25 +2105,75 @@ a {
 }
 
 .landingTopNavInner {
-  max-width: 1180px;
+  /* Dynamic-island / liquid glass pill */
+  max-width: min(720px, calc(100vw - 36px));
   margin: 0 auto;
-  display: flex;
-  justify-content: flex-end;
+  display: inline-flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  border-radius: calc(var(--radius) + 8px);
-  background: rgba(8,10,16,0.40);
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-  backdrop-filter: blur(14px);
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  position: relative;
+
+  background:
+    radial-gradient(140px 80px at 18% 20%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 70%),
+    radial-gradient(160px 90px at 82% 30%, rgba(32,255,154,0.10) 0%, rgba(32,255,154,0) 68%),
+    radial-gradient(140px 90px at 70% 110%, rgba(255,176,32,0.10) 0%, rgba(255,176,32,0) 70%),
+    linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(10,12,18,0.42) 45%, rgba(0,0,0,0.35) 100%);
+
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow:
+    0 24px 70px rgba(0,0,0,0.60),
+    0 0 0 1px rgba(255,255,255,0.05) inset;
+
+  backdrop-filter: blur(18px) saturate(1.2);
   pointer-events: auto;
+  overflow: hidden;
+}
+
+/* liquid highlight layer */
+.landingTopNavInner::before {
+  content: '';
+  position: absolute;
+  inset: -40% -20%;
+  background:
+    conic-gradient(from 180deg at 50% 50%,
+      rgba(255,255,255,0) 0deg,
+      rgba(255,255,255,0.18) 40deg,
+      rgba(255,255,255,0) 95deg,
+      rgba(255,255,255,0.10) 140deg,
+      rgba(255,255,255,0) 220deg,
+      rgba(255,255,255,0.08) 300deg,
+      rgba(255,255,255,0) 360deg);
+  opacity: 0.35;
+  filter: blur(10px);
+  animation: islandSheen 8s linear infinite;
+}
+
+/* subtle inner shadow for depth */
+.landingTopNavInner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.10) inset,
+    0 -12px 24px rgba(0,0,0,0.45) inset;
+  pointer-events: none;
+}
+
+@keyframes islandSheen {
+  0% { transform: translateX(-12%) rotate(0deg); }
+  100% { transform: translateX(12%) rotate(360deg); }
 }
 
 .landingNavSci {
+  position: relative;
   display: inline-flex;
-  align-items: baseline;
-  gap: 16px;
+  align-items: center;
+  gap: 14px;
+  z-index: 1; /* above sheen */
 }
 
 .landingNavLink {
@@ -2133,22 +2183,42 @@ a {
   text-transform: uppercase;
   font-size: 12px;
   text-decoration: none;
-  color: rgba(255,255,255,0.72);
-  border-bottom: 1px solid rgba(255,255,255,0.12);
-  padding-bottom: 2px;
+  color: rgba(255,255,255,0.76);
+  padding: 8px 10px;
+  border-radius: 999px;
+  position: relative;
 }
 
-.landingNavLink:hover { color: rgba(255,176,32,0.95); border-bottom-color: rgba(255,176,32,0.55); }
+.landingNavLink::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 4px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.22), rgba(255,255,255,0));
+  opacity: 0.55;
+}
+
+.landingNavLink:hover {
+  color: rgba(255,176,32,0.95);
+  background: rgba(255,255,255,0.05);
+}
+
+.landingNavLink:hover::after {
+  background: linear-gradient(90deg, rgba(255,176,32,0), rgba(255,176,32,0.75), rgba(255,176,32,0));
+  opacity: 0.9;
+}
 
 .landingTopNavInnerEdge {
-  max-width: 1180px;
-  justify-content: flex-end;
+  max-width: auto;
+  justify-content: center;
 }
 
 .landingTopCta {
   text-decoration: none;
   padding: 10px 14px;
-  border-radius: 999px;
+  border-radius: 10px;
   border: 1px solid rgba(255,77,77,0.35);
   background: rgba(255,77,77,0.12);
   color: rgba(255,255,255,0.92);
