@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiUrl } from '../api';
 import { useAuthStore } from '../state/auth';
 
 type LoginMode = 'OVERSEER' | 'FIELD_AGENT';
