@@ -2464,6 +2464,36 @@ a {
 
 .landingLinks { margin-top: 18px; display: flex; gap: 16px; flex-wrap: wrap; align-items: baseline; }
 
+/* Login uses these legacy button classes; keep minimal styles */
+.landingActions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+.landingBtnPrimary {
+  border: 1px solid rgba(32,255,154,0.25);
+  background: rgba(32,255,154,0.10);
+  color: rgba(255,255,255,0.92);
+  padding: 10px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.landingBtnGhost {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.82);
+  padding: 10px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.landingBtnPrimary:hover, .landingBtnGhost:hover { filter: brightness(1.08); }
+
 .portalBtn {
   appearance: none;
   border: none;

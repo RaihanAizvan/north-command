@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SceneLayout from '../components/SceneLayout';
 import { apiUrl } from '../api';
@@ -49,6 +49,7 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [registerMode, setRegisterMode] = useState(false);
+  const [stationCode, setStationCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -84,6 +85,7 @@ export default function Login() {
         const r = await postJson<AgentAuthResponse>('/api/auth/login/agent', {
           username,
           password,
+          stationCode: stationCode.trim(),
         });
         setAuth({ token: r.token, role: 'FIELD_AGENT' });
         nav('/elf');
