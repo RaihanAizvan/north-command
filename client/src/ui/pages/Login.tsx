@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../state/auth';
 
@@ -84,6 +84,18 @@ export default function Login() {
     return '/cute-elf.png';
   }, [mode, registerMode]);
 
+  const portraitAnim = useMemo(() => {
+    if (mode === 'OVERSEER') return 'portraitAnimDefault';
+    if (registerMode) return 'portraitAnimDarkElf';
+    return 'portraitAnimDefault';
+  }, [mode, registerMode]);
+
+  const [portraitNonce, setPortraitNonce] = useState(0);
+  useEffect(() => {
+    // Force remount of the portrait to restart CSS animation on mode change.
+    setPortraitNonce((n) => n + 1);
+  }, [portrait]);
+
   const [seed] = useState(() => {
     // deterministic-ish per mount
     return Array.from({ length: 28 }).map((_, i) => ({
@@ -152,7 +164,7 @@ export default function Login() {
               transform: `translate(${gaze.x * 1.2}px, ${gaze.y * 1.2}px) rotateX(${(-gaze.y * 0.4).toFixed(2)}deg) rotateY(${(gaze.x * 0.4).toFixed(2)}deg)`,
             }}
           >
-            <img src={portrait} alt="" draggable={false} />
+            <img key={`${portrait}-${portraitNonce}`} className={portraitAnim} src={portrait} alt="" draggable={false} />
           </div>
         </div>
 
