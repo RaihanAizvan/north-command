@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import ElfDashboard from './pages/ElfDashboard';
 import SantaDashboard from './pages/SantaDashboard';
@@ -33,12 +34,14 @@ export default function App() {
 
   return (
     <Routes>
-      {/* Public route (no shell) */}
+      {/* Public routes (no shell) */}
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
 
       {/* Shell-wrapped routes */}
       <Route element={<AppLayout />}>
-        <Route path="/" element={<Navigate to={token ? (effectiveRole === 'OVERSEER' ? '/santa' : '/elf') : '/login'} replace />} />
+        {/* Landing is public now; keep shell route root unused */}
+        <Route path="/app" element={<Navigate to={token ? (effectiveRole === 'OVERSEER' ? '/santa' : '/elf') : '/login'} replace />} />
         <Route
           path="/elf"
           element={token && effectiveRole === 'FIELD_AGENT' ? <ElfDashboard /> : <Navigate to="/login" replace />}
