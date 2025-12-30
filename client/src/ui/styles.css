@@ -1385,9 +1385,93 @@ a {
   overflow: auto;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   background: #070a10;
-  align-content: flex-start;
+}
+
+.chatRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.daySep {
+  display: flex;
+  justify-content: center;
+}
+
+.daySep span {
+  font-size: 11px;
+  color: rgba(190,205,235,0.7);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.25);
+}
+
+.bubbleRow {
+  display: flex;
+}
+
+.bubbleRow.me { justify-content: flex-end; }
+.bubbleRow.them { justify-content: flex-start; }
+
+.bubble {
+  max-width: 82%;
+  border-radius: 16px;
+  padding: 10px 10px 8px 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.92);
+  position: relative;
+}
+
+.bubble.me {
+  background: rgba(255,77,77,0.14);
+  border-color: rgba(255,77,77,0.22);
+}
+
+.bubbleText {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+.bubbleMeta {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1;
+  color: rgba(190,205,235,0.72);
+  text-align: right;
+}
+
+/* Bubble tail on last message in a group */
+.bubbleRow.tail.me .bubble::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  bottom: 10px;
+  width: 10px;
+  height: 10px;
+  background: rgba(255,77,77,0.14);
+  border-right: 1px solid rgba(255,77,77,0.22);
+  border-bottom: 1px solid rgba(255,77,77,0.22);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.bubbleRow.tail.them .bubble::after {
+  content: '';
+  position: absolute;
+  left: -6px;
+  bottom: 10px;
+  width: 10px;
+  height: 10px;
+  background: rgba(255,255,255,0.05);
+  border-left: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  transform: rotate(-45deg);
+  border-radius: 2px;
 }
 
 .chatEmpty { color: var(--muted); }
@@ -1794,57 +1878,16 @@ a {
   padding: 14px;
 }
 
-.spinSanta {
-  width: 54px;
-  height: 54px;
-  position: relative;
-}
-
-.spinRing {
-  position: absolute;
-  inset: 0;
+.spinRingOnly {
   border-radius: 999px;
-  border: 2px solid rgba(255,77,77,0.25);
-  border-top-color: rgba(255,77,77,0.85);
-  box-shadow: 0 0 0 6px rgba(255,77,77,0.06);
+  border: 2px solid rgba(255,77,77,0.20);
+  border-top-color: rgba(255,77,77,0.92);
+  box-shadow: 0 0 0 6px rgba(255,77,77,0.05);
   animation: spin 900ms linear infinite;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
-}
-
-.spinHat {
-  position: absolute;
-  left: 50%;
-  top: -10px;
-  width: 34px;
-  height: 22px;
-  margin-left: -17px;
-  background: rgba(255,77,77,0.85);
-  border-radius: 18px 18px 10px 10px;
-  transform: rotate(-14deg);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-}
-
-.spinHatTrim {
-  position: absolute;
-  left: 3px;
-  right: 3px;
-  bottom: 2px;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.92);
-}
-
-.spinHatPom {
-  position: absolute;
-  right: -6px;
-  top: 2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.92);
 }
 
 .spinLabel {

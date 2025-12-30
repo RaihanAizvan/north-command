@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { io, Socket } from 'socket.io-client';
 import { useAuthStore } from '../state/auth';
 
@@ -56,6 +57,7 @@ async function postJson<T>(url: string, token: string, body: unknown): Promise<T
 
 export default function SantaDashboard() {
   const { token, clear } = useAuthStore();
+  const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -80,6 +82,7 @@ export default function SantaDashboard() {
 
   useEffect(() => {
     if (!token) return;
+    setLoading(true);
     (async () => {
       const [allTasks, allElves, myNotifications] = await Promise.all([
         getJson<Task[]>('/api/tasks', token),
@@ -89,7 +92,9 @@ export default function SantaDashboard() {
       setTasks(allTasks);
       setElves(allElves);
       setNotifications(myNotifications);
-    })().catch(() => clear());
+    })()
+      .catch(() => clear())
+      .finally(() => setLoading(false));
   }, [token, clear]);
 
   useEffect(() => {
@@ -187,6 +192,10 @@ export default function SantaDashboard() {
   }
 
   if (!token) return null;
+
+  if (loading) {
+    return <LoadingSpinner label="Loading dashboard" />;
+  }
 
   return (
     <div className="container" style={{ maxWidth: 1180 }}>

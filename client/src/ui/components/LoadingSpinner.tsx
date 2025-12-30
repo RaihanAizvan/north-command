@@ -1,13 +1,7 @@
-export default function LoadingSpinner({ label }: { label?: string }) {
+export default function LoadingSpinner({ label, size = 54 }: { label?: string; size?: number }) {
   return (
     <div className="spinWrap" aria-live="polite" aria-busy="true">
-      <div className="spinSanta" aria-hidden>
-        <div className="spinRing" />
-        <div className="spinHat">
-          <div className="spinHatTrim" />
-          <div className="spinHatPom" />
-        </div>
-      </div>
+      <div className="spinRingOnly" style={{ width: size, height: size }} aria-hidden />
       {label ? <div className="spinLabel">{label}</div> : null}
     </div>
   );

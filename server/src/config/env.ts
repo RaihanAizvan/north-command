@@ -17,4 +17,8 @@ export const env = {
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN ?? '12h',
   RATE_LIMIT_WINDOW_MS: Number(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000),
   RATE_LIMIT_MAX: Number(process.env.RATE_LIMIT_MAX ?? 120),
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY ?? null,
+  GEMINI_MODEL: process.env.GEMINI_MODEL ?? null,
+  // Google Generative Language API version. In practice, v1beta has broader model support for generateContent.
+  GEMINI_API_VERSION: process.env.GEMINI_API_VERSION ?? 'v1beta',
 };

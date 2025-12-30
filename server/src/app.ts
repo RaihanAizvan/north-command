@@ -10,6 +10,7 @@ import { notificationRoutes } from './routes/notificationRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { chatRoutes } from './routes/chatRoutes.js';
 import { adminRoutes } from './routes/adminRoutes.js';
+import { aiRoutes } from './routes/aiRoutes.js';
 
 export function createApp() {
   const app = express();
@@ -40,6 +41,7 @@ export function createApp() {
   app.use('/api/notifications', notificationRoutes);
   app.use('/api/chat', chatRoutes);
   app.use('/api/admin', adminRoutes);
+  app.use('/api/ai', aiRoutes);
 
   app.use(errorHandler);
 
