@@ -2146,23 +2146,23 @@ a {
 }
 
 .landingBlock {
-  max-width: 1180px;
-  margin: 0 auto;
+  /* full width, no centering container */
+  width: 100%;
   min-height: 92vh;
-  position: relative;
-  padding: 40px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(120px, 18vw, 340px); /* center corridor */
+  padding: 40px clamp(18px, 3vw, 44px);
 }
 
 .landingSide {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  /* hug viewport edges but preserve a center corridor for Santa */
   width: min(520px, 36vw);
+  display: flex;
+  justify-content: flex-start;
 }
 
-.landingSideLeft { left: clamp(18px, 3vw, 44px); }
-.landingSideRight { right: clamp(18px, 3vw, 44px); }
+.landingSideRight { justify-content: flex-end; text-align: right; }
 
 .landingSideCard {
   /* no container look: text floats over the scene */
@@ -2181,8 +2181,13 @@ a {
 .landingBlock.inView .landingSideCard { opacity: 1; transform: translateY(0); }
 
 @media (max-width: 920px) {
-  .landingSide { position: relative; top: auto; transform: none; width: 100%; }
-  .landingSideLeft, .landingSideRight { left: auto; right: auto; }
+  .landingBlock {
+    display: grid;
+    gap: 22px;
+    padding: 40px 18px;
+  }
+  .landingSide { width: 100%; }
+  .landingSideRight { text-align: left; justify-content: flex-start; }
 }
 
 .landingCopy {
