@@ -527,6 +527,15 @@ a {
 .relicBtn:hover { transform: translateY(-1px); background: rgba(255,77,77,0.18); }
 .relicBtn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
+.miniSpin {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,0.18);
+  border-top-color: rgba(255,255,255,0.85);
+  animation: spin 800ms linear infinite;
+}
+
 .loginFooter {
   margin-top: 14px;
   color: rgba(190,205,235,0.60);
@@ -1770,6 +1779,74 @@ a {
 .toastTitle { font-weight: 900; color: rgba(255,77,77,0.95); }
 .toastX { border: 1px solid var(--panel-border); background: transparent; color: var(--text); border-radius: 10px; padding: 4px 8px; cursor: pointer; }
 .toastMsg { margin-top: 6px; color: var(--text); }
+
+/* Santa-themed loading spinner */
+.spinWrap {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  padding: 14px;
+}
+
+.spinSanta {
+  width: 54px;
+  height: 54px;
+  position: relative;
+}
+
+.spinRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 2px solid rgba(255,77,77,0.25);
+  border-top-color: rgba(255,77,77,0.85);
+  box-shadow: 0 0 0 6px rgba(255,77,77,0.06);
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinHat {
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  width: 34px;
+  height: 22px;
+  margin-left: -17px;
+  background: rgba(255,77,77,0.85);
+  border-radius: 18px 18px 10px 10px;
+  transform: rotate(-14deg);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+}
+
+.spinHatTrim {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: 2px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.92);
+}
+
+.spinHatPom {
+  position: absolute;
+  right: -6px;
+  top: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.92);
+}
+
+.spinLabel {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
 
 @media (max-width: 520px) {
   .toastHost { left: 12px; right: 12px; width: auto; }

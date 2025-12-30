@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { useAuthStore } from '../state/auth';
 
 type Elf = { _id: string; username: string; role: 'FIELD_AGENT'; createdAt: string };
@@ -66,7 +67,7 @@ export default function ElfManagementPage() {
               <div className="overlayBody">
                 <div className="inboxList">
                   {!modalTasks ? (
-                    <div className="inboxEmpty">Loading…</div>
+                    <div className="inboxEmpty"><LoadingSpinner label="Loading tasks" /></div>
                   ) : modalTasks.length === 0 ? (
                     <div className="inboxEmpty">No tasks assigned.</div>
                   ) : (

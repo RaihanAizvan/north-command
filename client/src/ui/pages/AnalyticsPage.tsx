@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { useAuthStore } from '../state/auth';
 import ElfBarChart from './ElfBarChart';
 
@@ -20,7 +21,7 @@ export default function AnalyticsPage() {
       .catch(() => {});
   }, [token]);
 
-  if (!data) return <div style={{ color: 'var(--muted)' }}>Loading…</div>;
+  if (!data) return <LoadingSpinner label="Loading analytics" />;
 
   return (
     <div className="stack">

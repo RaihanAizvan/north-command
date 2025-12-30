@@ -247,7 +247,15 @@ export default function Login() {
 
           <div className="loginActions">
             <button className="relicBtn" disabled={busy} onClick={onSubmit}>
-              {busy ? 'Authenticating…' : registerMode ? 'Register' : 'Enter'}
+              {busy ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                  <span className="miniSpin" aria-hidden /> Authenticating
+                </span>
+              ) : registerMode ? (
+                'Register'
+              ) : (
+                'Enter'
+              )}
             </button>
           </div>
 
