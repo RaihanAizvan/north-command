@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { useSmoothScroll, smoothScrollToHash } from '../hooks/useSmoothScroll';
+
 import WorkshopScene from "../components/WorkshopScene";
 import { useAuthStore } from "../state/auth";
 
@@ -39,6 +41,8 @@ export default function Landing() {
     return (
       <Navigate to={effectiveRole === "OVERSEER" ? "/santa" : "/elf"} replace />
     );
+
+  useSmoothScroll({ enabled: true });
 
   const [mode, setMode] = useState<Mode>("HERO");
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -126,13 +130,37 @@ export default function Landing() {
       <header className="landingTopNav">
         <div className="landingTopNavInner landingTopNavInnerEdge">
           <nav className="landingNavSci">
-            <a className="landingNavLink" href="#plan" aria-current={mode === 'PLAN' ? 'page' : undefined}>
+            <a
+              className="landingNavLink"
+              href="#plan"
+              aria-current={mode === 'PLAN' ? 'page' : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                smoothScrollToHash('#plan');
+              }}
+            >
               PL
             </a>
-            <a className="landingNavLink" href="#review" aria-current={mode === 'REVIEW' ? 'page' : undefined}>
+            <a
+              className="landingNavLink"
+              href="#review"
+              aria-current={mode === 'REVIEW' ? 'page' : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                smoothScrollToHash('#review');
+              }}
+            >
               RV
             </a>
-            <a className="landingNavLink" href="#security" aria-current={mode === 'CELEBRATE' ? 'page' : undefined}>
+            <a
+              className="landingNavLink"
+              href="#security"
+              aria-current={mode === 'CELEBRATE' ? 'page' : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                smoothScrollToHash('#security');
+              }}
+            >
               SC
             </a>
             <Link to="/login" className="landingTopCta">
