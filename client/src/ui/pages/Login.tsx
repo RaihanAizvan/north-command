@@ -20,6 +20,8 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
 }
 
 export default function Login() {
+  // Reimagined login: cinematic, calm, deliberate.
+
   const nav = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
   const clear = useAuthStore((s) => s.clear);
@@ -74,114 +76,147 @@ export default function Login() {
     }
   }
 
-  function Eye({ x, y }: { x: number; y: number }) {
-    return (
-      <div style={{ width: 64, height: 64, borderRadius: 999, border: '1px solid var(--panel-border)', background: '#0b1018', display: 'grid', placeItems: 'center' }}>
-        <div style={{ width: 34, height: 34, borderRadius: 999, background: '#f1f5ff', position: 'relative' }}>
-          <div
-            style={{
-              width: 12,
-              height: 12,
-              borderRadius: 999,
-              background: '#111',
-              position: 'absolute',
-              left: 11 + x,
-              top: 11 + y,
-            }}
-          />
-        </div>
-      </div>
-    );
-  }
+  const [gaze, setGaze] = useState({ x: 0, y: 0 });
 
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [seed] = useState(() => {
+    // deterministic-ish per mount
+    return Array.from({ length: 28 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      size: 1 + Math.random() * 2.6,
+      drift: 8 + Math.random() * 18,
+      delay: Math.random() * 8,
+      opacity: 0.08 + Math.random() * 0.14,
+    }));
+  });
+
+  function updateGaze(clientX: number, clientY: number) {
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight * 0.38;
+    const dx = Math.max(-10, Math.min(10, (clientX - cx) / 60));
+    const dy = Math.max(-10, Math.min(10, (clientY - cy) / 60));
+    setGaze({ x: dx, y: dy });
+  }
 
   return (
     <div
-      className="container"
-      style={{ paddingTop: 70, paddingBottom: 70 }}
-      onPointerMove={(e) => {
-        const cx = window.innerWidth / 2;
-        const cy = 140;
-        const dx = Math.max(-8, Math.min(8, (e.clientX - cx) / 60));
-        const dy = Math.max(-8, Math.min(8, (e.clientY - cy) / 60));
-        setMouse({ x: dx, y: dy });
-      }}
-      onPointerDown={(e) => {
-        const cx = window.innerWidth / 2;
-        const cy = 140;
-        const dx = Math.max(-8, Math.min(8, (e.clientX - cx) / 60));
-        const dy = Math.max(-8, Math.min(8, (e.clientY - cy) / 60));
-        setMouse({ x: dx, y: dy });
-      }}
+      className="loginScene"
+      onPointerMove={(e) => updateGaze(e.clientX, e.clientY)}
+      onPointerDown={(e) => updateGaze(e.clientX, e.clientY)}
     >
-      <div className="panel" style={{ padding: 18, maxWidth: 860, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, alignItems: 'center' }}>
-          <div>
-            <div className="h1">NORTH-COMMAND</div>
-            <div style={{ color: 'var(--muted)', marginTop: 6 }}>{title}</div>
+      <div className="loginAtmos" aria-hidden>
+        <div className="loginHalo" />
+        <div className="loginVeil" />
+        <div className="loginVignette" />
+        <div className="loginParticles">
+          {seed.map((p) => (
+            <span
+              key={p.id}
+              className="loginParticle"
+              style={{
+                left: `${p.left}%`,
+                top: `${p.top}%`,
+                width: p.size,
+                height: p.size,
+                opacity: p.opacity,
+                animationDuration: `${p.drift}s`,
+                animationDelay: `${p.delay}s`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="loginFrame">
+        <div className="loginSigil" aria-hidden>
+          <div className="sigilOuter">
+            <div className="sigilInner" />
           </div>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }} aria-hidden>
-            <Eye x={mouse.x} y={mouse.y} />
-            <Eye x={mouse.x * 0.8} y={mouse.y * 0.8} />
-          </div>
+          <div className="sigilGaze" style={{ transform: `translate(${gaze.x}px, ${gaze.y}px)` }} />
         </div>
 
-        <div style={{ marginTop: 14, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button
-            className={`btn ${mode === 'FIELD_AGENT' && !registerMode ? 'btnPrimary' : ''}`}
-            onClick={() => {
-              setMode('FIELD_AGENT');
-              setRegisterMode(false);
-            }}
-          >
-            Field Agent
-          </button>
-          <button
-            className={`btn ${mode === 'FIELD_AGENT' && registerMode ? 'btnPrimary' : ''}`}
-            onClick={() => {
-              setMode('FIELD_AGENT');
-              setRegisterMode(true);
-            }}
-          >
-            Register
-          </button>
-          <button
-            className={`btn ${mode === 'OVERSEER' ? 'btnPrimary' : ''}`}
-            onClick={() => {
-              setMode('OVERSEER');
-              setRegisterMode(false);
-            }}
-          >
-            Overseer
-          </button>
-        </div>
-        <div style={{ marginTop: 18, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <div>
-            <div style={{ color: 'var(--muted)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1.2 }}>Username</div>
-            <input className="input" value={username} onChange={(e) => setUsername(e.target.value)} />
-          </div>
-          <div>
-            <div style={{ color: 'var(--muted)', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1.2 }}>Password</div>
-            <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div className="loginCard" role="region" aria-label="Access">
+          <div className="loginHeader">
+            <div className="loginKicker">North Command</div>
+            <div className="loginTitle">Threshold Access</div>
+            <div className="loginSubtitle">{title}</div>
           </div>
 
-        </div>
-
-        {error ? (
-          <div style={{ marginTop: 12, border: '1px solid rgba(255,51,68,0.35)', padding: 10, borderRadius: 10, color: '#ffd6da' }}>
-            {error}
+          <div className="loginModes" role="tablist" aria-label="Access mode">
+            <button
+              className={`loginMode ${mode === 'FIELD_AGENT' && !registerMode ? 'active' : ''}`}
+              onClick={() => {
+                setMode('FIELD_AGENT');
+                setRegisterMode(false);
+              }}
+              type="button"
+              role="tab"
+            >
+              Field Agent
+            </button>
+            <button
+              className={`loginMode ${mode === 'FIELD_AGENT' && registerMode ? 'active' : ''}`}
+              onClick={() => {
+                setMode('FIELD_AGENT');
+                setRegisterMode(true);
+              }}
+              type="button"
+              role="tab"
+            >
+              Register
+            </button>
+            <button
+              className={`loginMode ${mode === 'OVERSEER' ? 'active' : ''}`}
+              onClick={() => {
+                setMode('OVERSEER');
+                setRegisterMode(false);
+              }}
+              type="button"
+              role="tab"
+            >
+              Overseer
+            </button>
           </div>
-        ) : null}
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16, gap: 10 }}>
-          <button className="btn btnPrimary" disabled={busy} onClick={onSubmit}>
-            {busy ? 'Authenticating…' : 'Enter'}
-          </button>
-        </div>
+          <div className="loginFields">
+            <label className="relicField">
+              <span className="relicLabel">Identity</span>
+              <input
+                className="relicInput"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                placeholder="Enter your name"
+              />
+              <span className="relicGlow" aria-hidden />
+            </label>
 
-        <div style={{ marginTop: 14, color: 'var(--muted)', fontSize: 12, lineHeight: 1.5 }}>
-          Hardened access. No theatrics. Real-time command channel.
+            <label className="relicField">
+              <span className="relicLabel">Passphrase</span>
+              <input
+                className="relicInput"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete={registerMode ? 'new-password' : 'current-password'}
+                placeholder="Speak it quietly"
+              />
+              <span className="relicGlow" aria-hidden />
+            </label>
+          </div>
+
+          {error ? <div className="loginError">{error}</div> : null}
+
+          <div className="loginActions">
+            <button className="relicBtn" disabled={busy} onClick={onSubmit}>
+              {busy ? 'Authenticating…' : registerMode ? 'Register' : 'Enter'}
+            </button>
+          </div>
+
+          <div className="loginFooter">
+            <div className="loginNote">This channel is monitored. Proceed with intent.</div>
+          </div>
         </div>
       </div>
     </div>
