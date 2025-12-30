@@ -244,6 +244,46 @@ export default function Login() {
 
           </div>
 
+          <div className="loginSamples" aria-label="Sample test data">
+            <div className="loginSamplesTitle">Sample test data</div>
+            <div className="loginSampleRow">
+              <div>
+                <div className="loginSampleRole">Overseer</div>
+                <div className="loginSampleCred">santa / santa</div>
+              </div>
+              <button
+                type="button"
+                className="loginSampleUse"
+                onClick={() => {
+                  setMode('OVERSEER');
+                  setRegisterMode(false);
+                  setUsername('santa');
+                  setPassword('santa');
+                }}
+              >
+                Use
+              </button>
+            </div>
+            <div className="loginSampleRow">
+              <div>
+                <div className="loginSampleRole">Field Agent</div>
+                <div className="loginSampleCred">elf01 / elf</div>
+              </div>
+              <button
+                type="button"
+                className="loginSampleUse"
+                onClick={() => {
+                  setMode('FIELD_AGENT');
+                  setRegisterMode(false);
+                  setUsername('elf01');
+                  setPassword('elf');
+                }}
+              >
+                Use
+              </button>
+            </div>
+          </div>
+
           {error ? <div className="loginError">{error}</div> : null}
 
           <div className="loginActions">
