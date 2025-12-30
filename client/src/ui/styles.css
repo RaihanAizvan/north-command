@@ -1402,11 +1402,14 @@ a {
   border-radius: 14px;
   padding: 10px;
   line-height: 1.35;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .chatMsg.me .chatBubble { border-color: rgba(101,240,165,0.25); }
 
-.chatTime { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.chatTime { font-size: 11px; line-height: 1.1; color: var(--muted); margin-top: 0; opacity: 0.85; }
 
 .chatComposer {
   padding: 12px;
@@ -1914,6 +1917,9 @@ a {
   border-radius: 14px;
   padding: 10px;
   line-height: 1.35;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .msgBubble.me {
@@ -1923,7 +1929,7 @@ a {
 
 .msgBubble.them { justify-self: start; }
 
-.msgMeta { margin-top: 6px; font-size: 11px; color: var(--muted); }
+.msgMeta { margin-top: 0; font-size: 11px; line-height: 1.1; color: var(--muted); opacity: 0.85; }
 
 .msgComposer { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--panel-border); }
 
