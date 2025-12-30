@@ -2462,10 +2462,10 @@ a {
 .portalBtn:focus-visible { outline: 2px solid rgba(255,176,32,0.55); outline-offset: 10px; border-radius: 16px; }
 
 .portalSvg {
-  width: 210px;
-  height: 210px;
+  width: 240px;
+  height: 200px;
   filter: drop-shadow(0 24px 80px rgba(0,0,0,0.65));
-  transform: translateZ(0);
+  transform: translateZ(0) perspective(800px) rotateX(10deg) rotateY(-12deg);
 }
 
 .portalLabel {
@@ -2476,7 +2476,7 @@ a {
   color: rgba(255,255,255,0.85);
 }
 
-.portalBtn:hover .portalSvg { transform: scale(1.02); }
+.portalBtn:hover .portalSvg { transform: translateZ(0) perspective(800px) rotateX(10deg) rotateY(-12deg) scale(1.02); }
 .portalBtn:hover .portalLabel { color: rgba(255,176,32,0.95); }
 
 .landingHeroRow {
@@ -2495,7 +2495,9 @@ a {
   z-index: 9;
   pointer-events: none;
   opacity: 0;
-  background: radial-gradient(circle at var(--portal-x, 70%) var(--portal-y, 20%), rgba(255,255,255,0.10) 0%, rgba(255,176,32,0.10) 18%, rgba(0,0,0,0.92) 60%, rgba(0,0,0,1) 100%);
+  /* deep obsidian + warm/emerald glow (avoid blue/red horror vibe) */
+  background:
+    radial-gradient(circle at var(--portal-x, 70%) var(--portal-y, 20%), rgba(160,245,255,0.10) 0%, rgba(32,255,154,0.08) 18%, rgba(255,176,32,0.06) 34%, rgba(0,0,0,0.92) 62%, rgba(0,0,0,1) 100%);
   transition: opacity 220ms ease;
 }
 
