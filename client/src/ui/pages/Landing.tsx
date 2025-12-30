@@ -230,9 +230,13 @@ export default function Landing() {
           <div className="landingSide landingSideRight">
             <div className="landingSideCard">
               <div className="landingEyebrow">PLAN</div>
-              <div className="landingSideTitle">
-                One Dashbord. Manage Everything
-              </div>
+              <AnimatedText
+                text="One Dashbord. Manage Everything"
+                as="div"
+                className="landingSideTitle"
+                seed={303}
+                variant="glitchFlip"
+              />
               <div className="landingP">
                 Elfs operate a single work-order.
                 Status cycles through:
