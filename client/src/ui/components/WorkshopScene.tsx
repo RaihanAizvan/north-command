@@ -379,6 +379,9 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     );
 
     // Mount renderer
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.display = 'block';
     host.appendChild(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
