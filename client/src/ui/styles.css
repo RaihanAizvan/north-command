@@ -265,14 +265,14 @@ a {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(900px 600px at 50% 30%, rgba(0,0,0,0.10), rgba(0,0,0,0.68)),
-    linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.70));
+    radial-gradient(900px 600px at 50% 30%, rgba(0,0,0,0.10), rgba(4, 4, 4, 0.46)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.038), rgba(0, 0, 0, 0.176));
 }
 
 .loginVignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 40%, transparent 34%, rgba(0,0,0,0.58) 82%);
+  background: radial-gradient(circle at 50% 40%, transparent 34%, rgba(0, 0, 0, 0.074) 82%);
 }
 
 .loginParticles { position: absolute; inset: 0; }
@@ -280,7 +280,7 @@ a {
   position: absolute;
   border-radius: 999px;
   background: rgba(255,255,255,0.9);
-  filter: blur(0.2px);
+  filter: blur(1px);
   animation: particleDrift linear infinite;
 }
 
