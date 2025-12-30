@@ -24,6 +24,39 @@
 
   --blur: 12px;
   --radius: 18px;
+
+  /* Landing typography (custom fonts) */
+  --font-display-a: 'Ethnocentric', ui-sans-serif, system-ui;
+  --font-display-b: 'Dune Rise', ui-sans-serif, system-ui;
+  --font-accent: 'Batman Forever', ui-sans-serif, system-ui;
+}
+
+@font-face {
+  font-family: 'Dune Rise';
+  src:
+    url('/fonts/dune_rise/Dune_Rise.otf') format('opentype'),
+    url('/fonts/dune_rise/Dune_Rise.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: url('/fonts/ethnocentric/Ethnocentric-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Batman Forever';
+  src:
+    url('/fonts/batman_forever/batmfo__.ttf') format('truetype'),
+    url('/fonts/batman_forever/batmfa__.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 * {
@@ -2124,11 +2157,12 @@ a {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: min(420px, 42vw);
+  /* hug viewport edges but preserve a center corridor for Santa */
+  width: min(520px, 36vw);
 }
 
-.landingSideLeft { left: 0; }
-.landingSideRight { right: 0; }
+.landingSideLeft { left: clamp(18px, 3vw, 44px); }
+.landingSideRight { right: clamp(18px, 3vw, 44px); }
 
 .landingSideCard {
   /* no container look: text floats over the scene */
@@ -2210,22 +2244,24 @@ a {
 
 .landingH1 { margin: 12px 0 0 0; font-weight: 950; letter-spacing: -0.6px; font-size: clamp(34px, 4.2vw, 56px); }
 .landingH2 { font-weight: 950; letter-spacing: 0.6px; text-transform: uppercase; font-size: 12px; color: rgba(255,255,255,0.80); }
-.landingP { margin: 10px 0 0 0; max-width: 760px; line-height: 1.65; color: rgba(255,255,255,0.78); font-size: 15px; }
+.landingP { margin: 14px 0 0 0; max-width: 760px; line-height: 1.7; color: rgba(255,255,255,0.78); font-size: 16px; }
 
 .landingEyebrow {
-  font-weight: 950;
-  letter-spacing: 3px;
+  font-family: var(--font-display-b);
+  font-weight: 400;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  font-size: 11px;
+  font-size: 12px;
   color: rgba(255,255,255,0.72);
 }
 
 .landingSideTitle {
-  margin-top: 10px;
-  font-weight: 980;
-  letter-spacing: -0.9px;
-  font-size: clamp(44px, 4.8vw, 64px);
-  line-height: 1.0;
+  margin-top: 12px;
+  font-family: var(--font-display-a);
+  font-weight: 400;
+  letter-spacing: -1.2px;
+  font-size: clamp(52px, 5.4vw, 78px);
+  line-height: 0.96;
 }
 
 .landingBig {
@@ -2259,12 +2295,13 @@ a {
 
 .landingLink {
   text-decoration: none;
+  font-family: var(--font-accent);
   color: rgba(255,255,255,0.90);
-  font-weight: 900;
-  letter-spacing: 1.6px;
+  font-weight: 400;
+  letter-spacing: 2.4px;
   text-transform: uppercase;
-  font-size: 12px;
-  padding-bottom: 2px;
+  font-size: 13px;
+  padding-bottom: 3px;
   border-bottom: 1px solid rgba(255,255,255,0.18);
 }
 
