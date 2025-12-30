@@ -277,8 +277,24 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     let santa: THREE.Object3D | null = null;
     let headBone: THREE.Object3D | null = null;
     let torsoBone: THREE.Object3D | null = null;
+    let leftArm: THREE.Object3D | null = null;
+    let rightArm: THREE.Object3D | null = null;
+    let leftForeArm: THREE.Object3D | null = null;
+    let rightForeArm: THREE.Object3D | null = null;
+    let leftHand: THREE.Object3D | null = null;
+    let rightHand: THREE.Object3D | null = null;
+
+    // facial morph targets for smile (best-effort)
+    const smileTargets: Array<{ mesh: THREE.Mesh; index: number }> = [];
+
     let headBaseRot: THREE.Euler | null = null;
     let torsoBaseRot: THREE.Euler | null = null;
+    let leftArmBaseRot: THREE.Euler | null = null;
+    let rightArmBaseRot: THREE.Euler | null = null;
+    let leftForeArmBaseRot: THREE.Euler | null = null;
+    let rightForeArmBaseRot: THREE.Euler | null = null;
+    let leftHandBaseRot: THREE.Euler | null = null;
+    let rightHandBaseRot: THREE.Euler | null = null;
 
     const santaUrl = '/model/santa-claus/source/Santa.glb';
 
@@ -292,12 +308,33 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
           // capture bones for subtle pose control
           const anyObj = obj as any;
           if (anyObj.isBone && typeof obj.name === 'string') {
-            if (!headBone && /head/i.test(obj.name)) headBone = obj;
-            if (!torsoBone && /(spine|chest|upperchest|torso)/i.test(obj.name)) torsoBone = obj;
+            const n = obj.name;
+            if (!headBone && /head/i.test(n)) headBone = obj;
+            if (!torsoBone && /(spine|chest|upperchest|torso)/i.test(n)) torsoBone = obj;
+
+            // best-effort arm discovery (various rigs)
+            if (!leftArm && /(leftarm|arm_l|upperarm_l|l_upperarm|l_arm)/i.test(n)) leftArm = obj;
+            if (!rightArm && /(rightarm|arm_r|upperarm_r|r_upperarm|r_arm)/i.test(n)) rightArm = obj;
+            if (!leftForeArm && /(leftforearm|forearm_l|lowerarm_l|l_forearm|l_lowerarm)/i.test(n)) leftForeArm = obj;
+            if (!rightForeArm && /(rightforearm|forearm_r|lowerarm_r|r_forearm|r_lowerarm)/i.test(n)) rightForeArm = obj;
+            if (!leftHand && /(lefthand|hand_l|l_hand)/i.test(n)) leftHand = obj;
+            if (!rightHand && /(righthand|hand_r|r_hand)/i.test(n)) rightHand = obj;
           }
 
           const mesh = obj as THREE.Mesh;
           if (!mesh.isMesh) return;
+
+          // best-effort smile morph target discovery
+          const anyMesh = mesh as any;
+          const dict = anyMesh.morphTargetDictionary as Record<string, number> | undefined;
+          if (dict && Object.keys(dict).length) {
+            const keys = Object.keys(dict);
+            const key = keys.find((k) => /smile|mouthsmile|happy|grin/i.test(k));
+            if (key) {
+              const idx = dict[key];
+              if (typeof idx === 'number') smileTargets.push({ mesh, index: idx });
+            }
+          }
           mesh.castShadow = false;
           mesh.receiveShadow = false;
           const mat = mesh.material as THREE.MeshStandardMaterial | THREE.MeshStandardMaterial[];
@@ -326,6 +363,12 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
         // capture baseline bone rotations (so our offsets don't "bend" the rig permanently)
         if (headBone) headBaseRot = headBone.rotation.clone();
         if (torsoBone) torsoBaseRot = torsoBone.rotation.clone();
+        if (leftArm) leftArmBaseRot = leftArm.rotation.clone();
+        if (rightArm) rightArmBaseRot = rightArm.rotation.clone();
+        if (leftForeArm) leftForeArmBaseRot = leftForeArm.rotation.clone();
+        if (rightForeArm) rightForeArmBaseRot = rightForeArm.rotation.clone();
+        if (leftHand) leftHandBaseRot = leftHand.rotation.clone();
+        if (rightHand) rightHandBaseRot = rightHand.rotation.clone();
 
         root.add(santa);
       },
@@ -431,6 +474,68 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       if (torsoBone && torsoBaseRot) {
         torsoBone.rotation.y = lerp(torsoBone.rotation.y, torsoBaseRot.y + yaw * 0.18, 0.14);
         torsoBone.rotation.x = lerp(torsoBone.rotation.x, torsoBaseRot.x + pitch * 0.10, 0.14);
+      }
+
+      // Arms: neutralize any "up-arrow" pose and add scroll-driven micro-gestures.
+      // We only apply if we successfully found bones; always relative to baseline.
+      const gesture = Math.sin(t * 0.9) * 0.06 + (input.scrollProgress - 0.5) * 0.10;
+      const modeBias =
+        input.mode === 'PLAN' ? 0.10 : input.mode === 'REVIEW' ? -0.06 : input.mode === 'CELEBRATE' ? 0.14 : 0;
+
+      // Default hands: return to baseline, add *very subtle* symmetric motion.
+      // Keep everything small so we don't fight the rig or create asymmetry.
+      const g = clamp(gesture, -0.10, 0.10);
+      const gArm = g * 0.10; // tiny upper-arm motion
+      const gFore = g * 0.18 + modeBias * 0.08;
+      const gHand = g * 0.14;
+
+      // Endless wave (both hands) — premium loop, applied relative to baseline.
+      const wave = Math.sin(t * 1.35) * 0.18; // main swing
+      const waveWrist = Math.sin(t * 2.7) * 0.22; // quicker wrist flick
+      const waveLift = 0.10; // keep hands slightly up
+
+      if (leftArm && leftArmBaseRot) {
+        // slight lift so wave reads clearly
+        leftArm.rotation.x = lerp(leftArm.rotation.x, leftArmBaseRot.x + gArm + waveLift, 0.08);
+        leftArm.rotation.z = lerp(leftArm.rotation.z, leftArmBaseRot.z + gArm * 0.6, 0.08);
+      }
+      if (rightArm && rightArmBaseRot) {
+        // slight lift so wave reads clearly
+        rightArm.rotation.x = lerp(rightArm.rotation.x, rightArmBaseRot.x + gArm + waveLift, 0.08);
+        rightArm.rotation.z = lerp(rightArm.rotation.z, rightArmBaseRot.z - gArm * 0.6, 0.08);
+      }
+
+      if (leftForeArm && leftForeArmBaseRot) {
+        leftForeArm.rotation.x = lerp(leftForeArm.rotation.x, leftForeArmBaseRot.x + gFore, 0.09);
+        // wave: forearm swing (mirrored)
+        leftForeArm.rotation.z = lerp(leftForeArm.rotation.z, leftForeArmBaseRot.z - wave, 0.12);
+      }
+      if (rightForeArm && rightForeArmBaseRot) {
+        rightForeArm.rotation.x = lerp(rightForeArm.rotation.x, rightForeArmBaseRot.x + gFore, 0.09);
+        // wave: forearm swing
+        rightForeArm.rotation.z = lerp(rightForeArm.rotation.z, rightForeArmBaseRot.z + wave, 0.12);
+      }
+
+      if (leftHand && leftHandBaseRot) {
+        // wave: wrist flick + small roll (mirrored)
+        leftHand.rotation.z = lerp(leftHand.rotation.z, leftHandBaseRot.z - waveWrist, 0.16);
+        leftHand.rotation.x = lerp(leftHand.rotation.x, leftHandBaseRot.x - wave * 0.25, 0.14);
+      }
+      if (rightHand && rightHandBaseRot) {
+        // wave: wrist flick + small roll
+        rightHand.rotation.z = lerp(rightHand.rotation.z, rightHandBaseRot.z + waveWrist, 0.16);
+        rightHand.rotation.x = lerp(rightHand.rotation.x, rightHandBaseRot.x + wave * 0.25, 0.14);
+      }
+
+      // Smile (best-effort morph targets)
+      if (smileTargets.length) {
+        const target = 0.35 + Math.max(0, Math.sin(t * 0.35)) * 0.10;
+        for (const st of smileTargets) {
+          const anyMesh = st.mesh as any;
+          const infl = anyMesh.morphTargetInfluences as number[] | undefined;
+          if (!infl) continue;
+          infl[st.index] = lerp(infl[st.index] ?? 0, target, 0.08);
+        }
       }
 
       // Keep center clear; no in-scene text drift
