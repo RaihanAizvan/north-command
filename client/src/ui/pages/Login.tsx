@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiUrl } from '../api';
 import { useAuthStore } from '../state/auth';
@@ -21,6 +21,8 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
 }
 
 export default function Login() {
+  // Reimagined login: cinematic, calm, deliberate.
+
   const nav = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
   const clear = useAuthStore((s) => s.clear);
@@ -42,7 +44,10 @@ export default function Login() {
     setError(null);
     setBusy(true);
     clear();
-
+    if (mode === 'FIELD_AGENT' && !registerMode) {
+      // Task-based workflow: existing agents can login without extra fields.
+      // Registration is available via the Register tab.
+    }
     try {
       if (mode === 'OVERSEER') {
         const r = await postJson<{ token: string; role: 'OVERSEER' }>('/api/auth/login/overseer', {
@@ -51,27 +56,22 @@ export default function Login() {
         });
         setAuth({ token: r.token, role: 'OVERSEER' });
         nav('/santa');
-        return;
-      }
-
-      if (registerMode) {
+      } else if (registerMode) {
         const r = await postJson<AgentAuthResponse>('/api/auth/register/agent', {
           username,
           password,
         });
         setAuth({ token: r.token, role: 'FIELD_AGENT', stationId: r.stationId ?? null });
         nav('/elf');
-        return;
+      } else {
+        const r = await postJson<AgentAuthResponse>('/api/auth/login/agent', {
+          username,
+          password,
+          stationCode: stationCode.trim(),
+        });
+        setAuth({ token: r.token, role: 'FIELD_AGENT', stationId: r.stationId ?? null });
+        nav('/elf');
       }
-
-      // FIELD_AGENT login requires stationCode (server enforces station binding)
-      const r = await postJson<AgentAuthResponse>('/api/auth/login/agent', {
-        username,
-        password,
-        stationCode: stationCode.trim(),
-      });
-      setAuth({ token: r.token, role: 'FIELD_AGENT', stationId: r.stationId ?? null });
-      nav('/elf');
     } catch (e) {
       setError(e instanceof Error ? e.message : registerMode ? 'Registration failed' : 'Login failed');
     } finally {
@@ -81,15 +81,34 @@ export default function Login() {
 
   const [gaze, setGaze] = useState({ x: 0, y: 0 });
 
+  const portrait = useMemo(() => {
+    if (mode === 'OVERSEER') return '/santa.png';
+    if (registerMode) return '/dark-elf.png';
+    return '/cute-elf.png';
+  }, [mode, registerMode]);
+
+  const portraitAnim = useMemo(() => {
+    if (mode === 'OVERSEER') return 'portraitAnimDefault';
+    if (registerMode) return 'portraitAnimDarkElf';
+    return 'portraitAnimDefault';
+  }, [mode, registerMode]);
+
+  const [portraitNonce, setPortraitNonce] = useState(0);
+  useEffect(() => {
+    // Force remount of the portrait to restart CSS animation on mode change.
+    setPortraitNonce((n) => n + 1);
+  }, [portrait]);
+
   const [seed] = useState(() => {
-    return Array.from({ length: 28 }).map((_, i) => ({
+    // deterministic-ish per mount
+    return Array.from({ length: 40 }).map((_, i) => ({
       id: i,
       left: Math.random() * 100,
       top: Math.random() * 100,
-      size: 1 + Math.random() * 2.6,
-      drift: 8 + Math.random() * 18,
+      size: 1.8 + Math.random() * 3.4,
+      drift: 10 + Math.random() * 20,
       delay: Math.random() * 8,
-      opacity: 0.08 + Math.random() * 0.14,
+      opacity: 0.14 + Math.random() * 0.22,
     }));
   });
 
@@ -102,11 +121,20 @@ export default function Login() {
   }
 
   return (
-    <div className="loginScene" onPointerMove={(e) => updateGaze(e.clientX, e.clientY)} onPointerDown={(e) => updateGaze(e.clientX, e.clientY)}>
+    <div
+      className="loginScene"
+      onPointerMove={(e) => updateGaze(e.clientX, e.clientY)}
+      onPointerDown={(e) => updateGaze(e.clientX, e.clientY)}
+    >
       <div className="loginAtmos" aria-hidden>
+        <picture className="loginBg">
+          <source media="(max-width: 720px)" srcSet="/bg-santa-mobile.png" />
+          <img src="/bg-santa.png" alt="" draggable={false} />
+        </picture>
         <div className="loginHalo" />
         <div className="loginVeil" />
         <div className="loginVignette" />
+        <div className="loginStars" aria-hidden />
         <div className="loginParticles">
           {seed.map((p) => (
             <span
@@ -131,7 +159,20 @@ export default function Login() {
           <div className="sigilOuter">
             <div className="sigilInner" />
           </div>
-          <div className="sigilGaze" style={{ transform: `translate(${gaze.x}px, ${gaze.y}px)` }} />
+          <div
+            className="sigilGaze"
+            style={{
+              transform: `translate(${gaze.x}px, ${gaze.y}px)`,
+            }}
+          />
+          <div
+            className="sigilPortrait"
+            style={{
+              transform: `translate3d(${gaze.x * 0.35}px, ${gaze.y * 0.35}px, 0) rotateX(${(-gaze.y * 0.75).toFixed(2)}deg) rotateY(${(gaze.x * 0.75).toFixed(2)}deg)`,
+            }}
+          >
+            <img key={`${portrait}-${portraitNonce}`} className={portraitAnim} src={portrait} alt="" draggable={false} />
+          </div>
         </div>
 
         <div className="loginCard" role="region" aria-label="Access">
@@ -180,7 +221,13 @@ export default function Login() {
           <div className="loginFields">
             <label className="relicField">
               <span className="relicLabel">Identity</span>
-              <input className="relicInput" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" placeholder="Enter your name" />
+              <input
+                className="relicInput"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                placeholder="Enter your name"
+              />
               <span className="relicGlow" aria-hidden />
             </label>
 
@@ -200,7 +247,12 @@ export default function Login() {
             {mode === 'FIELD_AGENT' && !registerMode ? (
               <label className="relicField">
                 <span className="relicLabel">Station Code</span>
-                <input className="relicInput" value={stationCode} onChange={(e) => setStationCode(e.target.value)} placeholder="A-01" />
+                <input
+                  className="relicInput"
+                  value={stationCode}
+                  onChange={(e) => setStationCode(e.target.value)}
+                  placeholder="A-01"
+                />
                 <span className="relicGlow" aria-hidden />
               </label>
             ) : null}
@@ -210,7 +262,15 @@ export default function Login() {
 
           <div className="loginActions">
             <button className="relicBtn" disabled={busy} onClick={onSubmit}>
-              {busy ? 'Authenticating…' : registerMode ? 'Register' : 'Enter'}
+              {busy ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+                  <span className="miniSpin" aria-hidden /> Authenticating
+                </span>
+              ) : registerMode ? (
+                'Register'
+              ) : (
+                'Enter'
+              )}
             </button>
           </div>
 
