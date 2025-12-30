@@ -2284,17 +2284,33 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: clamp(120px, 18vw, 340px); /* center corridor */
-  padding: 40px clamp(18px, 3vw, 44px);
+  gap: clamp(80px, 14vw, 260px); /* center corridor */
+  padding: 40px clamp(16px, 3vw, 44px);
 }
 
 .landingSide {
-  width: min(520px, 36vw);
+  width: clamp(320px, 36vw, 720px);
   display: flex;
   justify-content: flex-start;
 }
 
-.landingSideSpacer { width: min(520px, 36vw); }
+.landingSideSpacer { width: clamp(320px, 36vw, 720px); }
+
+@media (min-width: 1200px) {
+  .landingBlock {
+    gap: clamp(60px, 11vw, 200px);
+  }
+}
+
+@media (min-width: 1400px) {
+  .landingSide, .landingSideSpacer { width: clamp(360px, 38vw, 780px); }
+  .landingBlock { gap: clamp(48px, 8vw, 160px); }
+}
+
+@media (min-width: 1600px) {
+  .landingSide, .landingSideSpacer { width: clamp(380px, 40vw, 860px); }
+  .landingBlock { gap: clamp(44px, 7vw, 150px); }
+}
 
 .landingSideLeft { --landing-heading-font: var(--font-display-b); }
 .landingSideRight { --landing-heading-font: var(--font-display-a); justify-content: flex-end; text-align: right; }
@@ -2407,11 +2423,14 @@ a {
 .landingSideTitle {
   margin-top: 12px;
   font-family: var(--landing-heading-font, var(--font-display-b));
-  font-weight: 400;
-  letter-spacing: 0.8px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
   text-transform: uppercase;
-  font-size: clamp(52px, 5.4vw, 78px);
-  line-height: 0.98;
+  font-size: clamp(42px, 4.6vw, 72px);
+  line-height: 0.94;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
 }
 
 .landingBig {
@@ -2456,29 +2475,103 @@ a {
   justify-items: center;
   gap: 10px;
   transform-origin: center;
+  position: relative;
+}
+
+/* Energy aura behind the portal */
+.portalBtn::before {
+  content: '';
+  position: absolute;
+  inset: -22px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255,51,68,0.08), rgba(255,51,68,0)),
+    radial-gradient(circle at 70% 55%, rgba(255,176,32,0.05), rgba(255,176,32,0)),
+    radial-gradient(circle at 45% 75%, rgba(255,255,255,0.04), rgba(255,255,255,0));
+  filter: blur(20px);
+  opacity: 0.34;
+  transform: translateZ(0);
+  pointer-events: none;
+  animation: portalAura 3.4s ease-in-out infinite;
+}
+
+@keyframes portalAura {
+  0%, 100% { opacity: 0.55; transform: scale(0.98); }
+  50% { opacity: 0.9; transform: scale(1.02); }
 }
 
 .portalBtn:focus { outline: none; }
 .portalBtn:focus-visible { outline: 2px solid rgba(255,176,32,0.55); outline-offset: 10px; border-radius: 16px; }
 
 .portalSvg {
-  width: 240px;
-  height: 200px;
+  width: clamp(140px, 18vw, 210px);
+  aspect-ratio: 1 / 1;
   filter: drop-shadow(0 24px 80px rgba(0,0,0,0.65));
-  transform: translateZ(0) perspective(800px) rotateX(10deg) rotateY(-12deg);
 }
 
-.portalLabel {
-  font-family: var(--font-display-b);
-  letter-spacing: 6px;
-  font-size: 12px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.85);
+.portalSvg svg { width: 100%; height: 100%; display: block; }
+
+.portalRing { transform-origin: 110px 110px; }
+
+.portalRingA { animation: portalSpin 6.5s linear infinite; }
+.portalRingB { animation: portalSpinReverse 9.5s linear infinite; }
+
+.portalSweep { transform-origin: 110px 110px; animation: portalSweep 2.8s ease-in-out infinite; }
+
+@keyframes portalSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.portalBtn:hover .portalSvg { transform: translateZ(0) perspective(800px) rotateX(10deg) rotateY(-12deg) scale(1.02); }
-.portalBtn:hover .portalLabel { color: rgba(255,176,32,0.95); }
+@keyframes portalSpinReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
 
+@keyframes portalSweep {
+  0% { transform: rotate(0deg); opacity: 0.25; }
+  45% { opacity: 0.75; }
+  100% { transform: rotate(360deg); opacity: 0.25; }
+}
+
+.portalBtn:hover .portalRingA { filter: drop-shadow(0 0 18px rgba(255,51,68,0.25)); }
+.portalBtn:hover .portalLabel { color: rgba(255,51,68,0.95); }
+.portalBtn:hover::before { opacity: 1; }
+
+/* Wave ring + orbiting glints */
+.portalWave { transform-origin: 110px 110px; animation: portalWaveSpin 10s linear infinite; }
+.portalWave circle:nth-child(2) { animation: portalDash 2.8s linear infinite; }
+.portalWave circle:nth-child(1) { animation: portalDash2 4.6s linear infinite; }
+
+@keyframes portalWaveSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes portalDash {
+  from { stroke-dashoffset: 0; opacity: 0.22; }
+  to { stroke-dashoffset: -140; opacity: 0.22; }
+}
+
+@keyframes portalDash2 {
+  from { stroke-dashoffset: 0; opacity: 0.18; }
+  to { stroke-dashoffset: 180; opacity: 0.18; }
+}
+
+.portalGlint { transform-origin: 110px 110px; filter: blur(0.2px); }
+.portalGlint0 { animation: glintOrbit 6.2s ease-in-out infinite; }
+.portalGlint1 { animation: glintOrbit 7.3s ease-in-out infinite; }
+.portalGlint2 { animation: glintOrbit 5.8s ease-in-out infinite; }
+.portalGlint3 { animation: glintOrbit 8.1s ease-in-out infinite; }
+.portalGlint4 { animation: glintOrbit 6.9s ease-in-out infinite; }
+
+@keyframes glintOrbit {
+  0%, 100% { transform: translate(0px, 0px); opacity: 0.10; }
+  40% { transform: translate(2px, -2px); opacity: 0.38; }
+  70% { transform: translate(-1px, 2px); opacity: 0.18; }
+}
+
+.portalBtn:hover .portalSvg { transform: scale(1.02); }
 .landingHeroRow {
   display: flex;
   gap: 22px;
@@ -2521,8 +2614,23 @@ a {
 }
 
 @media (max-width: 920px) {
-  .landingHeroRow { flex-direction: column; align-items: flex-start; }
-  .portalSvg { width: 180px; height: 180px; }
+  .landingBlock {
+    display: grid;
+    gap: 22px;
+    padding: 36px 16px;
+  }
+  .landingSideSpacer { display: none; }
+  .landingSide { width: 100%; }
+  .landingSideRight { text-align: left; justify-content: flex-start; }
+  .landingSideTitle { font-size: clamp(34px, 8vw, 52px); letter-spacing: 0.6px; }
+  .landingP { font-size: 15px; }
+  .portalSvg { width: clamp(140px, 52vw, 220px); }
+}
+
+@media (max-width: 520px) {
+  .landingScroll { padding-top: 96px; }
+  .landingSideTitle { font-size: 34px; }
+  .landingNavLink { padding: 6px 6px; }
 }
 
 .landingLink {

@@ -51,7 +51,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     scene.add(root);
 
     // Lights: dark ops with subtle holiday accents
-    const amb = new THREE.AmbientLight(0xffffff, 0.18);
+    const amb = new THREE.AmbientLight(0xffffff, 0.14);
     scene.add(amb);
 
     const key = new THREE.DirectionalLight(0xcfe3ff, 1.15);
@@ -179,7 +179,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     // Background: aurora-like haze + stars (non-plain, still dark-premium)
     const haze = new THREE.Mesh(
       new THREE.PlaneGeometry(40, 24),
-      new THREE.MeshBasicMaterial({ color: 0x010103, transparent: true, opacity: 0.86 })
+      new THREE.MeshBasicMaterial({ color: 0x000001, transparent: true, opacity: 0.92 })
     );
     haze.position.set(0, 3.2, -10);
     root.add(haze);
@@ -197,7 +197,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     const auroraMat = new THREE.MeshBasicMaterial({
       map: auroraTex,
       transparent: true,
-      opacity: 0.28,
+      opacity: 0.20,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
@@ -242,7 +242,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       starPos[i * 3 + 2] = -12 - Math.random() * 20;
     }
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    const starMat = new THREE.PointsMaterial({ color: 0x9fb7d6, size: 0.018, transparent: true, opacity: 0.16, depthWrite: false });
+    const starMat = new THREE.PointsMaterial({ color: 0x8aa3c2, size: 0.017, transparent: true, opacity: 0.10, depthWrite: false });
     const stars = new THREE.Points(starGeo, starMat);
     root.add(stars);
 
@@ -262,7 +262,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       color: 0xffffff,
       size: 0.024,
       transparent: true,
-      opacity: 0.22,
+      opacity: 0.14,
       depthWrite: false,
     });
     const snow = new THREE.Points(snowGeo, snowMat);
