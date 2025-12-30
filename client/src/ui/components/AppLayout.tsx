@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { apiUrl } from '../api';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../state/auth';
 import { useChatStore } from '../state/chat';
@@ -13,7 +14,7 @@ import { BellIcon, ChatIcon, MenuIcon, SnowIcon, TreeIcon } from './HeaderIcons'
 type Peer = { _id: string; username: string };
 
 async function authGet<T>(url: string, token: string): Promise<T> {
-  const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  const r = await fetch(apiUrl(url), { headers: { Authorization: `Bearer ${token}` } });
   if (!r.ok) throw new Error('Request failed');
   return r.json();
 }
