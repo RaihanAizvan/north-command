@@ -8,7 +8,7 @@ type LoginMode = 'OVERSEER' | 'FIELD_AGENT';
 type AgentAuthResponse = { token: string; role: 'FIELD_AGENT' };
 
 async function postJson<T>(url: string, body: unknown): Promise<T> {
-  const res = await fetch(url, {
+  const res = await fetch(apiUrl(url), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
