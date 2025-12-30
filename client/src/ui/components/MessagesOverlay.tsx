@@ -5,6 +5,30 @@ import { useChatStore } from '../state/chat';
 import { Avatar } from './Avatar';
 import LoadingSpinner from './LoadingSpinner';
 
+function dayKey(iso: string) {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+
+function dayLabel(iso: string) {
+  const d = new Date(iso);
+  const today = new Date();
+  const start = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const startToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const diffDays = Math.round((startToday - start) / (24 * 60 * 60 * 1000));
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  return d.toLocaleDateString();
+}
+
+function timeLabel(iso: string) {
+  return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function groupKey(m: { self?: boolean; fromUserId: string }) {
+  return `${m.self ? 'me' : 'them'}:${m.fromUserId}`;
+}
+
 type Peer = { _id: string; username: string };
 
 async function authGet<T>(url: string, token: string): Promise<T> {
@@ -90,14 +114,30 @@ export default function MessagesOverlay({ peers, onClose }: { peers: Peer[]; onC
 
             <div className="overlayThread">
               {loadingThread ? <LoadingSpinner label="Loading messages" /> : null}
+
               {!loadingThread
-                ? thread.map((m) => (
-                    <div key={m._id} className={`msgBubble ${m.self ? 'me' : 'them'}`}>
-                      <div className="msgText">{m.message}</div>
-                      <div className="msgMeta">{new Date(m.createdAt).toLocaleTimeString()}</div>
-                    </div>
-                  ))
+                ? thread.map((m, idx) => {
+                    const prev = thread[idx - 1];
+                    const next = thread[idx + 1];
+
+                    const newDay = !prev || dayKey(prev.createdAt) !== dayKey(m.createdAt);
+                    const isGroupStart = !prev || groupKey(prev) !== groupKey(m) || newDay;
+                    const isGroupEnd = !next || groupKey(next) !== groupKey(m) || dayKey(next.createdAt) !== dayKey(m.createdAt);
+
+                    return (
+                      <div key={m._id} className="chatRow">
+                        {newDay ? <div className="daySep"><span>{dayLabel(m.createdAt)}</span></div> : null}
+                        <div className={`bubbleRow ${m.self ? 'me' : 'them'} ${isGroupEnd ? 'tail' : ''} ${isGroupStart ? 'start' : 'cont'}`}>
+                          <div className={`bubble ${m.self ? 'me' : 'them'}`}>
+                            <div className="bubbleText">{m.message}</div>
+                            <div className="bubbleMeta">{timeLabel(m.createdAt)}</div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
                 : null}
+
               <div ref={endRef} />
             </div>
 
