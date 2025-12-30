@@ -37,7 +37,7 @@ function authHeaders(token: string) {
 }
 
 async function getJson<T>(url: string, token: string): Promise<T> {
-  const res = await fetch(url, { headers: { ...authHeaders(token) } });
+  const res = await fetch(((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '') + url, { headers: { ...authHeaders(token) } });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: 'Request failed' }));
     throw new Error(err.message ?? 'Request failed');
@@ -71,7 +71,7 @@ export default function ElfDashboard() {
 
   useEffect(() => {
     if (!token) return;
-    const s = io({ auth: { token } });
+    const s = io((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? undefined, { auth: { token } });
     setSocket(s);
     return () => {
       s.disconnect();

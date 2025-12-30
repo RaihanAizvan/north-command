@@ -11,7 +11,7 @@ export default function ElfManagementPage() {
 
   useEffect(() => {
     if (!token) return;
-    fetch('/api/admin/elves', { headers: { Authorization: `Bearer ${token}` } })
+    fetch(((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '') + '/api/admin/elves', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then(setElves)
       .catch(() => {});

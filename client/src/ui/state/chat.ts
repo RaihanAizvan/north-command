@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { io, Socket } from 'socket.io-client';
+import { apiUrl, API_BASE_URL } from '../api';
 import { useAuthStore } from './auth';
 
 type Message = { _id: string; fromUserId: string; toUserId: string; message: string; createdAt: string; self?: boolean };
@@ -54,7 +55,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   connect: () => {
     const { token } = useAuthStore.getState();
     if (!token) return;
-    const sock = io({ auth: { token } });
+    const sock = io(API_BASE_URL || undefined, { auth: { token } });
 
     sock.on('chat:msg', (msg: Message) => {
       const peerId = msg.self ? msg.toUserId : msg.fromUserId;
@@ -88,7 +89,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   send: async (toUserId, message) => {
     const { token } = useAuthStore.getState();
     if (!token) return;
-    await fetch(`/api/chat/dm/${toUserId}`, {
+    await fetch(apiUrl(`/api/chat/dm/${toUserId}`), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ message }),

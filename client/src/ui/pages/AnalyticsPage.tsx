@@ -14,7 +14,7 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     if (!token) return;
-    fetch('/api/admin/analytics', { headers: { Authorization: `Bearer ${token}` } })
+    fetch(((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '') + '/api/admin/analytics', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then(setData)
       .catch(() => {});
