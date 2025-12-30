@@ -277,6 +277,8 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     let santa: THREE.Object3D | null = null;
     let headBone: THREE.Object3D | null = null;
     let torsoBone: THREE.Object3D | null = null;
+    let headBaseRot: THREE.Euler | null = null;
+    let torsoBaseRot: THREE.Euler | null = null;
 
     const santaUrl = '/model/santa-claus/source/Santa.glb';
 
@@ -320,6 +322,10 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
         const scale = targetHeight / Math.max(0.0001, size.y);
         santa.scale.setScalar(scale);
         santa.position.y = -0.75; // sit on floor
+
+        // capture baseline bone rotations (so our offsets don't "bend" the rig permanently)
+        if (headBone) headBaseRot = headBone.rotation.clone();
+        if (torsoBone) torsoBaseRot = torsoBone.rotation.clone();
 
         root.add(santa);
       },
@@ -403,25 +409,28 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       const px = pointer.x - 0.5;
       const py = pointer.y - 0.5;
 
-      // Scroll-linked hero rotation (Giulio-style): Santa turns with scroll progress
-      const scrollTurn = (input.scrollProgress - 0.5) * 0.9; // ~[-0.45..0.45]
-      if (santa) santa.rotation.y = scrollTurn;
+      // Scroll-linked rotation: keep Santa within a readable front-facing arc
+      const scrollTurn = clamp((input.scrollProgress - 0.5) * 0.9, -0.55, 0.55);
+      if (santa) santa.rotation.y = lerp(santa.rotation.y, scrollTurn, 0.06);
 
       // Scroll velocity gives subtle camera push/pull (calm, not chaotic)
       const v = clamp(input.scrollVelocity, -40, 40);
       const vNorm = v / 40;
       camera.position.z = 5.8 + vNorm * 0.24;
 
-      // Cursor: slight head/torso tracking (tight limit)
-      const yaw = clamp(px * 0.22, -0.18, 0.18);
-      const pitch = clamp(-py * 0.18, -0.14, 0.14);
-      if (headBone) {
-        headBone.rotation.y = lerp(headBone.rotation.y, yaw, 0.10);
-        headBone.rotation.x = lerp(headBone.rotation.x, pitch, 0.10);
+      // Cursor: direct head tracking (premium: fast ease, no jitter)
+      const yaw = clamp(px * 0.55, -0.45, 0.45);
+      const pitch = clamp(py * 0.42, -0.34, 0.34);
+
+      if (headBone && headBaseRot) {
+        headBone.rotation.y = lerp(headBone.rotation.y, headBaseRot.y + yaw, 0.28);
+        headBone.rotation.x = lerp(headBone.rotation.x, headBaseRot.x + pitch, 0.28);
       }
-      if (torsoBone) {
-        torsoBone.rotation.y = lerp(torsoBone.rotation.y, yaw * 0.55, 0.08);
-        torsoBone.rotation.x = lerp(torsoBone.rotation.x, pitch * 0.35, 0.08);
+
+      // Torso remains subtle (keeps it premium and avoids "bent" silhouette)
+      if (torsoBone && torsoBaseRot) {
+        torsoBone.rotation.y = lerp(torsoBone.rotation.y, torsoBaseRot.y + yaw * 0.18, 0.14);
+        torsoBone.rotation.x = lerp(torsoBone.rotation.x, torsoBaseRot.x + pitch * 0.10, 0.14);
       }
 
       // Keep center clear; no in-scene text drift
@@ -458,13 +467,14 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       // slow rotation
       platform.rotation.y = t * 0.12;
 
-      // Idle auto-rotate when not interacting (very gentle)
+      // Keep camera stable; rotate Santa instead (clamped so he never disappears)
+      controls.autoRotate = false;
+
       const idleMs = performance.now() - lastInteract;
-      if (!reduced && idleMs > 1500) {
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.28;
-      } else {
-        controls.autoRotate = false;
+      if (santa && !reduced && idleMs > 1500) {
+        // gentle idle spin around a front-facing range
+        const idleTurn = Math.sin(t * 0.18) * 0.35; // [-0.35..0.35]
+        santa.rotation.y = lerp(santa.rotation.y, idleTurn + scrollTurn, 0.04);
       }
 
       // Animate aurora texture
