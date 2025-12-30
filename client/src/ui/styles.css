@@ -1794,57 +1794,16 @@ a {
   padding: 14px;
 }
 
-.spinSanta {
-  width: 54px;
-  height: 54px;
-  position: relative;
-}
-
-.spinRing {
-  position: absolute;
-  inset: 0;
+.spinRingOnly {
   border-radius: 999px;
-  border: 2px solid rgba(255,77,77,0.25);
-  border-top-color: rgba(255,77,77,0.85);
-  box-shadow: 0 0 0 6px rgba(255,77,77,0.06);
+  border: 2px solid rgba(255,77,77,0.20);
+  border-top-color: rgba(255,77,77,0.92);
+  box-shadow: 0 0 0 6px rgba(255,77,77,0.05);
   animation: spin 900ms linear infinite;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
-}
-
-.spinHat {
-  position: absolute;
-  left: 50%;
-  top: -10px;
-  width: 34px;
-  height: 22px;
-  margin-left: -17px;
-  background: rgba(255,77,77,0.85);
-  border-radius: 18px 18px 10px 10px;
-  transform: rotate(-14deg);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-}
-
-.spinHatTrim {
-  position: absolute;
-  left: 3px;
-  right: 3px;
-  bottom: 2px;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.92);
-}
-
-.spinHatPom {
-  position: absolute;
-  right: -6px;
-  top: 2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.92);
 }
 
 .spinLabel {

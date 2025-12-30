@@ -311,13 +311,7 @@ export default function AppLayout() {
             <div className="sidebarList">
               {loadingPeers ? (
                 <div className="card" style={{ padding: 10, display: 'grid', placeItems: 'center' }}>
-                  <div className="spinSanta" aria-hidden>
-                    <div className="spinRing" />
-                    <div className="spinHat">
-                      <div className="spinHatTrim" />
-                      <div className="spinHatPom" />
-                    </div>
-                  </div>
+                  <div className="spinRingOnly" style={{ width: 34, height: 34 }} aria-hidden />
                 </div>
               ) : null}
               {peers.map((p: Peer) => (

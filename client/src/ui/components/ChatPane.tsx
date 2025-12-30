@@ -19,6 +19,8 @@ export default function ChatPane() {
     endRef.current?.scrollIntoView({ block: 'end' });
   }, [thread.length, currentPeerId]);
 
+  const threadLoading = currentPeerId != null && messages[currentPeerId] == null;
+
   if (!token) return null;
 
   const typingText = currentPeerId && typing[currentPeerId] ? 'Typing…' : '';
@@ -31,7 +33,8 @@ export default function ChatPane() {
       </div>
 
       <div className="chatThread">
-        {thread.length === 0 ? <div className="chatEmpty">No messages yet.</div> : null}
+        {threadLoading ? <div className="chatEmpty"><div className="spinWrap"><div className="spinRingOnly" style={{ width: 34, height: 34 }} /></div></div> : null}
+        {!threadLoading && thread.length === 0 ? <div className="chatEmpty">No messages yet.</div> : null}
         {thread.map((m, idx) => {
           const prev = thread[idx - 1];
           const newGroup = !prev || groupKey(prev) !== groupKey(m);
