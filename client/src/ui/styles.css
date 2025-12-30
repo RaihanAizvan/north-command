@@ -2026,7 +2026,11 @@ a {
   display: grid;
   grid-template-rows: auto 1fr auto auto;
   gap: 18px;
+  pointer-events: none;
 }
+
+/* Allow interaction only on UI elements */
+.landing3dHud a { pointer-events: auto; }
 
 .landing3dTop {
   display: flex;
@@ -2072,10 +2076,10 @@ a {
   align-self: center;
   padding: 18px;
   border-radius: calc(var(--radius) + 12px);
-  border: 1px solid var(--panel-border);
-  background: rgba(8,10,16,0.62);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(180deg, rgba(8,10,16,0.70), rgba(8,10,16,0.55));
+  backdrop-filter: blur(16px);
+  box-shadow: 0 22px 70px rgba(0,0,0,0.60);
 }
 
 .landing3dKicker {
@@ -2146,8 +2150,8 @@ a {
 
 .landing3dCard {
   border-radius: calc(var(--radius) + 4px);
-  border: 1px solid var(--panel-border);
-  background: rgba(8,10,16,0.62);
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(180deg, rgba(8,10,16,0.62), rgba(8,10,16,0.46));
   backdrop-filter: blur(14px);
   padding: 14px;
   box-shadow: 0 18px 60px rgba(0,0,0,0.45);
