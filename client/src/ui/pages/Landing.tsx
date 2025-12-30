@@ -2,8 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useSmoothScroll, smoothScrollToHash } from '../hooks/useSmoothScroll';
 import PortalEnter from '../components/PortalEnter';
-import AnimatedText from '../components/AnimatedText';
-
 import WorkshopScene from "../components/WorkshopScene";
 import { useAuthStore } from "../state/auth";
 
@@ -193,13 +191,7 @@ export default function Landing() {
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">NORTH-COMMAND</div>
-              <AnimatedText
-                text="A Task Management tool for"
-                as="div"
-                className="landingSideTitle"
-                seed={101}
-                variant="glitchFlip"
-              />
+              <div className="landingSideTitle">A Task Management tool for</div>
               <div className="landingSideTitle" style={{ marginTop: 6 }}>
                 <span style={{ color: 'red' }}>santa</span>
               </div>
@@ -230,13 +222,7 @@ export default function Landing() {
           <div className="landingSide landingSideRight">
             <div className="landingSideCard">
               <div className="landingEyebrow">PLAN</div>
-              <AnimatedText
-                text="One Dashbord. Manage Everything"
-                as="div"
-                className="landingSideTitle"
-                seed={303}
-                variant="glitchFlip"
-              />
+              <div className="landingSideTitle">One Dashbord. Manage Everything</div>
               <div className="landingP">
                 Elfs operate a single work-order.
                 Status cycles through:
@@ -262,13 +248,7 @@ export default function Landing() {
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">SYSTEM STATUS</div>
-              <AnimatedText
-                text="Realtime orchestration for tasks."
-                as="div"
-                className="landingBig"
-                seed={202}
-                variant="glitchFlip"
-              />
+              <div className="landingBig">Realtime orchestration for tasks.</div>
               <div className="landingP">
                 Assign, retrain and gain the tasks to elfs. Elfs can chat with santa in realtime
               </div>
@@ -293,13 +273,7 @@ export default function Landing() {
           <div className="landingSide landingSideRight">
             <div className="landingSideCard">
               <div className="landingEyebrow">SECURITY</div>
-              <AnimatedText
-                text="Dual-path access. Clear boundaries."
-                as="div"
-                className="landingSideTitle"
-                seed={404}
-                variant="glitchFlip"
-              />
+              <div className="landingSideTitle">Dual-path access. Clear boundaries.</div>
               <div className="landingP">
                 Santa and elf roles are separated by server-side
                 authorization. Station binding prevents cross-station control.
@@ -324,13 +298,7 @@ export default function Landing() {
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">REVIEW</div>
-              <AnimatedText
-                text="Realtime Chat:"
-                as="div"
-                className="landingSideTitle"
-                seed={505}
-                variant="glitchFlip"
-              />
+              <div className="landingSideTitle">Realtime Chat:</div>
               <div className="landingP">
                 Every tasks is transparant
                 <span className="landingDot landingDotGreen" /> Active
