@@ -98,14 +98,14 @@ export default function Login() {
 
   const [seed] = useState(() => {
     // deterministic-ish per mount
-    return Array.from({ length: 28 }).map((_, i) => ({
+    return Array.from({ length: 40 }).map((_, i) => ({
       id: i,
       left: Math.random() * 100,
       top: Math.random() * 100,
-      size: 1 + Math.random() * 2.6,
-      drift: 8 + Math.random() * 18,
+      size: 1.8 + Math.random() * 3.4,
+      drift: 10 + Math.random() * 20,
       delay: Math.random() * 8,
-      opacity: 0.08 + Math.random() * 0.14,
+      opacity: 0.14 + Math.random() * 0.22,
     }));
   });
 

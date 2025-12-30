@@ -293,8 +293,9 @@ a {
 .loginParticle {
   position: absolute;
   border-radius: 999px;
-  background: rgba(255,255,255,0.9);
-  filter: blur(1px);
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 0 14px rgba(255,255,255,0.12);
+  filter: blur(0.55px);
   animation: particleDrift linear infinite;
 }
 
