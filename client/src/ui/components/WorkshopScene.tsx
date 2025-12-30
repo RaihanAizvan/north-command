@@ -44,7 +44,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     scene.fog = new THREE.Fog(0x050607, 5, 20);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 1.55, 6.2);
+    camera.position.set(0, 1.6, 5.8);
 
     // Root group (we can subtly move/scale everything if needed)
     const root = new THREE.Group();
@@ -71,10 +71,48 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     rimGreen.position.set(3.0, 1.0, 2.2);
     scene.add(rimGreen);
 
-    // Floor (obsidian, slightly reflective look)
+    // Snowy ground (cool tint, subtle speckle texture)
+    const snowCanvas = document.createElement('canvas');
+    snowCanvas.width = 1024;
+    snowCanvas.height = 1024;
+    const snowCtx = snowCanvas.getContext('2d');
+    if (snowCtx) {
+      snowCtx.fillStyle = '#0b0f16';
+      snowCtx.fillRect(0, 0, snowCanvas.width, snowCanvas.height);
+
+      // soft snowy base
+      const g = snowCtx.createRadialGradient(512, 520, 60, 512, 520, 520);
+      g.addColorStop(0, 'rgba(200,220,255,0.22)');
+      g.addColorStop(0.55, 'rgba(170,205,255,0.10)');
+      g.addColorStop(1, 'rgba(10,12,18,0)');
+      snowCtx.fillStyle = g;
+      snowCtx.fillRect(0, 0, snowCanvas.width, snowCanvas.height);
+
+      // speckles
+      for (let i = 0; i < 6000; i++) {
+        const x = Math.random() * snowCanvas.width;
+        const y = Math.random() * snowCanvas.height;
+        const a = 0.03 + Math.random() * 0.06;
+        snowCtx.fillStyle = `rgba(235,245,255,${a})`;
+        snowCtx.fillRect(x, y, 1, 1);
+      }
+    }
+
+    const snowTex = new THREE.CanvasTexture(snowCanvas);
+    snowTex.wrapS = THREE.RepeatWrapping;
+    snowTex.wrapT = THREE.RepeatWrapping;
+    snowTex.repeat.set(1, 1);
+    snowTex.minFilter = THREE.LinearFilter;
+    snowTex.magFilter = THREE.LinearFilter;
+
     const floor = new THREE.Mesh(
-      new THREE.CircleGeometry(9.0, 64),
-      new THREE.MeshStandardMaterial({ color: 0x070a0d, metalness: 0.25, roughness: 0.86 })
+      new THREE.CircleGeometry(10.2, 80),
+      new THREE.MeshStandardMaterial({
+        color: 0x0a0f16,
+        map: snowTex,
+        metalness: 0.05,
+        roughness: 0.98,
+      })
     );
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -0.8;
@@ -82,7 +120,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
 
     // Subtle ring glow (fake reflection / aura)
     const ring = new THREE.Mesh(
-      new THREE.RingGeometry(1.9, 2.8, 96),
+      new THREE.RingGeometry(2.2, 3.2, 96),
       new THREE.MeshBasicMaterial({
         color: 0x20ff9a,
         transparent: true,
@@ -235,7 +273,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
 
         santa.position.sub(center);
 
-        const targetHeight = 3.6; // make Santa more dominant in frame
+        const targetHeight = 4.1; // slightly bigger Santa
         const scale = targetHeight / Math.max(0.0001, size.y);
         santa.scale.setScalar(scale);
         santa.position.y = -0.75; // sit on floor
@@ -329,7 +367,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       // Scroll velocity gives subtle camera push/pull (calm, not chaotic)
       const v = clamp(input.scrollVelocity, -40, 40);
       const vNorm = v / 40;
-      camera.position.z = 6.2 + vNorm * 0.28;
+      camera.position.z = 5.8 + vNorm * 0.24;
 
       // Cursor: slight head/torso tracking (tight limit)
       const yaw = clamp(px * 0.22, -0.18, 0.18);
