@@ -92,10 +92,17 @@ export default function Login() {
   }, [mode, registerMode]);
 
   const [portraitNonce, setPortraitNonce] = useState(0);
+  const [bgReady, setBgReady] = useState(false);
   useEffect(() => {
     // Force remount of the portrait to restart CSS animation on mode change.
     setPortraitNonce((n) => n + 1);
   }, [portrait]);
+
+  useEffect(() => {
+    // Let the UI paint, then load the heavy background image.
+    const t = window.setTimeout(() => setBgReady(true), 50);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const [seed] = useState(() => {
     // deterministic-ish per mount
@@ -125,9 +132,14 @@ export default function Login() {
       onPointerDown={(e) => updateGaze(e.clientX, e.clientY)}
     >
       <div className="loginAtmos" aria-hidden>
-        <picture className="loginBg">
-          <source media="(max-width: 720px)" srcSet="/bg-santa-mobile.png" />
-          <img src="/bg-santa.png" alt="" draggable={false} />
+        <picture className={`loginBg ${bgReady ? 'ready' : ''}`}>
+          {/* background is lazy-attached after initial paint */}
+          {bgReady ? (
+            <>
+              <source media="(max-width: 720px)" srcSet="/bg-santa-mobile.png" />
+              <img src="/bg-santa.png" alt="" draggable={false} decoding="async" fetchPriority="low" />
+            </>
+          ) : null}
         </picture>
         <div className="loginHalo" />
         <div className="loginVeil" />
@@ -169,7 +181,15 @@ export default function Login() {
               transform: `translate3d(${gaze.x * 0.35}px, ${gaze.y * 0.35}px, 0) rotateX(${(-gaze.y * 0.75).toFixed(2)}deg) rotateY(${(gaze.x * 0.75).toFixed(2)}deg)`,
             }}
           >
-            <img key={`${portrait}-${portraitNonce}`} className={portraitAnim} src={portrait} alt="" draggable={false} />
+            <img
+              key={`${portrait}-${portraitNonce}`}
+              className={portraitAnim}
+              src={portrait}
+              alt=""
+              draggable={false}
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         </div>
 
