@@ -112,10 +112,10 @@ export default function Login() {
       onPointerDown={(e) => updateGaze(e.clientX, e.clientY)}
     >
       <div className="loginAtmos" aria-hidden>
-        <img className="loginBanner" src="/top-banner-hanging-lights.png" alt="" />
         <div className="loginHalo" />
         <div className="loginVeil" />
         <div className="loginVignette" />
+        <div className="loginStars" aria-hidden />
         <div className="loginParticles">
           {seed.map((p) => (
             <span
