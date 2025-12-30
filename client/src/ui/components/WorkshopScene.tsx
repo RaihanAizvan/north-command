@@ -118,20 +118,63 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     floor.position.y = -0.8;
     root.add(floor);
 
-    // Subtle ring glow (fake reflection / aura)
-    const ring = new THREE.Mesh(
-      new THREE.RingGeometry(2.2, 3.2, 96),
-      new THREE.MeshBasicMaterial({
-        color: 0x20ff9a,
-        transparent: true,
-        opacity: 0.10,
-        side: THREE.DoubleSide,
-        blending: THREE.AdditiveBlending,
-      })
+    // Holographic platform under Santa (stacked rings + scanline disc)
+    const platform = new THREE.Group();
+    platform.position.y = -0.795;
+    root.add(platform);
+
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x20ff9a,
+      transparent: true,
+      opacity: 0.12,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+
+    const ringOuter = new THREE.Mesh(new THREE.RingGeometry(2.2, 3.35, 128), ringMat);
+    ringOuter.rotation.x = -Math.PI / 2;
+    platform.add(ringOuter);
+
+    const ringMid = new THREE.Mesh(
+      new THREE.RingGeometry(1.4, 2.15, 128),
+      new THREE.MeshBasicMaterial({ ...ringMat, color: 0xffb020, opacity: 0.09 })
     );
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = -0.795;
-    root.add(ring);
+    ringMid.rotation.x = -Math.PI / 2;
+    ringMid.position.y = 0.002;
+    platform.add(ringMid);
+
+    const ringInner = new THREE.Mesh(
+      new THREE.RingGeometry(0.7, 1.25, 128),
+      new THREE.MeshBasicMaterial({ ...ringMat, color: 0xff3344, opacity: 0.07 })
+    );
+    ringInner.rotation.x = -Math.PI / 2;
+    ringInner.position.y = 0.004;
+    platform.add(ringInner);
+
+    // Scanline disc
+    const scanCanvas = document.createElement('canvas');
+    scanCanvas.width = 512;
+    scanCanvas.height = 512;
+    const scanCtx = scanCanvas.getContext('2d');
+    if (scanCtx) {
+      scanCtx.clearRect(0, 0, 512, 512);
+      for (let y = 0; y < 512; y += 4) {
+        scanCtx.fillStyle = `rgba(255,255,255,${0.03 + (y % 16 === 0 ? 0.02 : 0)})`;
+        scanCtx.fillRect(0, y, 512, 1);
+      }
+    }
+    const scanTex = new THREE.CanvasTexture(scanCanvas);
+    scanTex.minFilter = THREE.LinearFilter;
+    scanTex.magFilter = THREE.LinearFilter;
+
+    const scanDisc = new THREE.Mesh(
+      new THREE.CircleGeometry(2.1, 128),
+      new THREE.MeshBasicMaterial({ map: scanTex, transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    scanDisc.rotation.x = -Math.PI / 2;
+    scanDisc.position.y = 0.001;
+    platform.add(scanDisc);
 
     // Background: aurora-like haze + stars (non-plain, still dark-premium)
     const haze = new THREE.Mesh(
@@ -388,22 +431,26 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       if (input.mode === 'PLAN') {
         rimGreen.intensity = 0.78 + Math.cos(t * 1.05) * 0.06;
         rimRed.intensity = 0.62 + Math.sin(t * 1.1) * 0.05;
-        ring.material.color.setHex(0x20ff9a);
       } else if (input.mode === 'REVIEW') {
         rimGreen.intensity = 0.58 + Math.cos(t * 1.05) * 0.05;
         rimRed.intensity = 0.78 + Math.sin(t * 1.1) * 0.06;
-        ring.material.color.setHex(0xff3344);
       } else if (input.mode === 'CELEBRATE') {
         rimGreen.intensity = 0.80 + Math.cos(t * 1.25) * 0.09;
         rimRed.intensity = 0.82 + Math.sin(t * 1.2) * 0.09;
-        ring.material.color.setHex(0xffb020);
       } else {
         rimRed.intensity = 0.80 + Math.sin(t * 1.1) * 0.08;
         rimGreen.intensity = 0.62 + Math.cos(t * 1.05) * 0.07;
-        ring.material.color.setHex(0x20ff9a);
       }
 
-      ring.material.opacity = 0.08 + Math.max(0, Math.sin(t * 0.9)) * 0.06;
+      // animate holographic platform
+      const pulse = 0.06 + Math.max(0, Math.sin(t * 0.9)) * 0.08;
+      ringOuter.material.opacity = pulse;
+      (ringMid.material as THREE.MeshBasicMaterial).opacity = pulse * 0.75;
+      (ringInner.material as THREE.MeshBasicMaterial).opacity = pulse * 0.55;
+      scanDisc.material.opacity = 0.06 + Math.max(0, Math.sin(t * 1.1)) * 0.05;
+
+      // slow rotation
+      platform.rotation.y = t * 0.12;
 
       // Idle auto-rotate when not interacting (very gentle)
       const idleMs = performance.now() - lastInteract;

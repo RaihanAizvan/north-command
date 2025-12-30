@@ -2271,10 +2271,11 @@ a {
 
 .landingBig {
   margin-top: 10px;
-  font-weight: 950;
-  letter-spacing: -0.6px;
-  font-size: clamp(28px, 2.8vw, 36px);
-  color: rgba(255,255,255,0.90);
+  font-family: var(--font-display-b);
+  font-weight: 400;
+  letter-spacing: 1px;
+  font-size: clamp(30px, 3.0vw, 40px);
+  color: rgba(255,255,255,0.92);
 }
 
 .landingCode {
