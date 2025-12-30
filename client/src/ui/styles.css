@@ -2217,17 +2217,23 @@ a {
 
 .landingTopCta {
   text-decoration: none;
+  font-family: var(--font-accent);
   padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,77,77,0.35);
-  background: rgba(255,77,77,0.12);
+  border-radius: 999px;
+  border: 1px solid rgba(255,176,32,0.28);
+  background:
+    radial-gradient(80px 50px at 20% 20%, rgba(255,255,255,0.10), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255,176,32,0.12), rgba(0,0,0,0.10));
   color: rgba(255,255,255,0.92);
-  font-weight: 900;
-  letter-spacing: 1px;
+  font-weight: 400;
+  letter-spacing: 2.2px;
   text-transform: uppercase;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  position: relative;
+  z-index: 1;
 }
 
-.landingTopCta:hover { background: rgba(255,77,77,0.18); transform: translateY(-1px); }
+.landingTopCta:hover { background: rgba(255,176,32,0.16); }
 
 .landingScroll {
   position: relative;
@@ -2475,6 +2481,6 @@ a {
 
 @media (prefers-reduced-motion: reduce) {
   .landingCopy { opacity: 1; transform: none; transition: none; }
-  .landingTopCta:hover, .landingBtnPrimary:hover, .landingBtnGhost:hover { transform: none; }
+  .landingTopCta:hover, .landingNavLink:hover { transform: none; }
 }
 
