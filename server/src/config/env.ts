@@ -18,4 +18,5 @@ export const env = {
   RATE_LIMIT_WINDOW_MS: Number(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000),
   RATE_LIMIT_MAX: Number(process.env.RATE_LIMIT_MAX ?? 120),
   GEMINI_API_KEY: process.env.GEMINI_API_KEY ?? null,
+  GEMINI_MODEL: process.env.GEMINI_MODEL ?? null,
 };
