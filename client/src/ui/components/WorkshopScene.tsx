@@ -103,12 +103,54 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     haze.position.set(0, 3.2, -10);
     root.add(haze);
 
-    const aurora = new THREE.Mesh(
-      new THREE.PlaneGeometry(40, 24),
-      new THREE.MeshBasicMaterial({ color: 0x0b1430, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending })
-    );
-    aurora.position.set(0, 3.4, -9.8);
+    // Aurora curtain using a canvas texture (animated)
+    const auroraCanvas = document.createElement('canvas');
+    auroraCanvas.width = 1024;
+    auroraCanvas.height = 512;
+    const auroraCtx = auroraCanvas.getContext('2d');
+
+    const auroraTex = new THREE.CanvasTexture(auroraCanvas);
+    auroraTex.minFilter = THREE.LinearFilter;
+    auroraTex.magFilter = THREE.LinearFilter;
+
+    const auroraMat = new THREE.MeshBasicMaterial({
+      map: auroraTex,
+      transparent: true,
+      opacity: 0.55,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+
+    const aurora = new THREE.Mesh(new THREE.PlaneGeometry(40, 24), auroraMat);
+    aurora.position.set(0, 3.6, -9.8);
     root.add(aurora);
+
+    // Low-poly hills (two layers for depth)
+    function makeHills(color: number, z: number, y: number, height: number) {
+      const pts: THREE.Vector2[] = [];
+      const w = 22;
+      const steps = 18;
+      for (let i = 0; i <= steps; i++) {
+        const x = -w / 2 + (w / steps) * i;
+        const n = Math.sin(i * 0.55) * 0.4 + Math.sin(i * 1.2) * 0.25;
+        pts.push(new THREE.Vector2(x, n * height));
+      }
+      // close shape downwards
+      pts.push(new THREE.Vector2(w / 2 + 2, -5));
+      pts.push(new THREE.Vector2(-w / 2 - 2, -5));
+
+      const shape = new THREE.Shape(pts);
+      const geo = new THREE.ShapeGeometry(shape);
+      const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95 });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(0, y, z);
+      return mesh;
+    }
+
+    const hillsBack = makeHills(0x07101a, -15.5, -0.2, 1.6);
+    const hillsFront = makeHills(0x050a10, -12.0, -0.9, 2.4);
+    root.add(hillsBack);
+    root.add(hillsFront);
 
     const starCount = 900;
     const starGeo = new THREE.BufferGeometry();
@@ -332,6 +374,38 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
         controls.autoRotateSpeed = 0.28;
       } else {
         controls.autoRotate = false;
+      }
+
+      // Animate aurora texture
+      if (auroraCtx) {
+        const w = auroraCanvas.width;
+        const h = auroraCanvas.height;
+        auroraCtx.clearRect(0, 0, w, h);
+
+        // base dark gradient
+        const bg = auroraCtx.createLinearGradient(0, 0, 0, h);
+        bg.addColorStop(0, 'rgba(5,6,7,0.0)');
+        bg.addColorStop(0.2, 'rgba(8,14,24,0.25)');
+        bg.addColorStop(0.55, 'rgba(12,24,45,0.18)');
+        bg.addColorStop(1, 'rgba(5,6,7,0.0)');
+        auroraCtx.fillStyle = bg;
+        auroraCtx.fillRect(0, 0, w, h);
+
+        // moving ribbons
+        for (let i = 0; i < 6; i++) {
+          const phase = t * 0.25 + i * 0.7;
+          const x = ((Math.sin(phase) * 0.5 + 0.5) * w) | 0;
+          const bandW = 220 + Math.sin(t * 0.4 + i) * 60;
+          const grad = auroraCtx.createLinearGradient(x - bandW, 0, x + bandW, 0);
+          grad.addColorStop(0, 'rgba(0,0,0,0)');
+          grad.addColorStop(0.35, 'rgba(32,255,154,0.08)');
+          grad.addColorStop(0.55, 'rgba(255,176,32,0.06)');
+          grad.addColorStop(0.75, 'rgba(255,51,68,0.05)');
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+          auroraCtx.fillStyle = grad;
+          auroraCtx.fillRect(0, 0, w, h);
+        }
+        auroraTex.needsUpdate = true;
       }
 
       // Snow drift
