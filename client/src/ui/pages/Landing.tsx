@@ -114,17 +114,17 @@ export default function Landing() {
         <section className="landingBlock landingHero" data-section="HERO">
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
-              <div className="landingKicker">Immersive control • elegant motion</div>
-              <div className="landingSideTitle">Workshop console</div>
+              <div className="landingEyebrow">NORTH-COMMAND</div>
+              <div className="landingSideTitle">Industrial task control, dressed in winter light.</div>
               <div className="landingP">
-                Santa stays visible. The story panels stay on the edges.
+                A secure orchestration platform for Santa’s Workshop: elves execute with focus; Santa sees the entire floor in realtime.
               </div>
-              <div className="landingActions" style={{ marginTop: 12 }}>
-                <Link className="landingBtnPrimary" to="/login">
-                  Enter
+              <div className="landingLinks">
+                <Link className="landingLink" to="/login">
+                  [ ENTER CONSOLE ]
                 </Link>
-                <a className="landingBtnGhost" href="#plan">
-                  Brief
+                <a className="landingLink" href="#plan">
+                  [ READ BRIEF ]
                 </a>
               </div>
             </div>
@@ -132,10 +132,9 @@ export default function Landing() {
 
           <div className="landingSide landingSideRight">
             <div className="landingSideCard">
-              <div className="landingH2">Status</div>
-              <div className="landingP" style={{ marginTop: 8 }}>
-                Scroll changes mood. Cursor adds life. Center stays clear.
-              </div>
+              <div className="landingEyebrow">SYSTEM STATUS</div>
+              <div className="landingBig">Realtime orchestration for the final window.</div>
+              <div className="landingP">Scroll sets the narrative. Santa remains in view. Interaction stays restrained.</div>
             </div>
           </div>
         </section>
@@ -143,17 +142,17 @@ export default function Landing() {
         <section id="plan" className="landingBlock" data-section="PLAN">
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
-              <div className="landingH2">Plan</div>
-              <p className="landingP">Tasks align into a sequence. Motion stays calm and readable.</p>
-              <div className="landingRow">
-                <div className="landingMiniCard">
-                  <div className="landingMiniTitle">Stations</div>
-                  <div className="landingMiniBody">Assign work with clarity and minimal friction.</div>
-                </div>
-                <div className="landingMiniCard">
-                  <div className="landingMiniTitle">Batches</div>
-                  <div className="landingMiniBody">Track progress across production, QC, and packing.</div>
-                </div>
+              <div className="landingEyebrow">PLAN</div>
+              <div className="landingSideTitle">One station. One work-order. No noise.</div>
+              <div className="landingP">
+                Field Agents operate a single active work-order at a time. Status cycles through:
+                <span className="landingCode">IN PRODUCTION</span> → <span className="landingCode">QC‑RELEVANT</span> → <span className="landingCode">PACKED</span>.
+              </div>
+              <div className="landingP">
+                If a station fails, <span className="landingEm">STATION DOWN</span> triggers a live alert to the Overseer.
+              </div>
+              <div className="landingLinks">
+                <Link className="landingLink" to="/login">[ FIELD AGENT LOGIN ]</Link>
               </div>
             </div>
           </div>
@@ -162,17 +161,20 @@ export default function Landing() {
         <section className="landingBlock" data-section="REVIEW">
           <div className="landingSide landingSideRight">
             <div className="landingSideCard">
-              <div className="landingH2">Review</div>
-              <p className="landingP">War-room visibility. Distress signals. Payload progress. Broadcasts.</p>
-              <div className="landingRow">
-                <div className="landingMiniCard">
-                  <div className="landingMiniTitle">War Room</div>
-                  <div className="landingMiniBody">Every station becomes a status card. No refresh.</div>
-                </div>
-                <div className="landingMiniCard">
-                  <div className="landingMiniTitle">NorthBot</div>
-                  <div className="landingMiniBody">Markdown replies for crisp instructions.</div>
-                </div>
+              <div className="landingEyebrow">REVIEW</div>
+              <div className="landingSideTitle">Overseer view: the War Room grid.</div>
+              <div className="landingP">
+                Every station is a card.
+                <span className="landingDot landingDotGreen" /> Active production.
+                <span className="landingDot landingDotGrey" /> Idle.
+                <span className="landingDot landingDotOrange" /> Distress.
+              </div>
+              <div className="landingP">
+                Sleigh Payload Meter increments as batches are marked <span className="landingCode">PACKED</span>.
+              </div>
+              <div className="landingP">Global Broadcast pushes scrolling text to all stations in realtime.</div>
+              <div className="landingLinks">
+                <Link className="landingLink" to="/login">[ OVERSEER LOGIN ]</Link>
               </div>
             </div>
           </div>
@@ -181,22 +183,41 @@ export default function Landing() {
         <section className="landingBlock" data-section="CELEBRATE">
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
-              <div className="landingH2">Completion</div>
-              <p className="landingP">A restrained celebration: warm accents, stable motion, and a clean handoff.</p>
-              <div className="landingActions">
-                <Link className="landingBtnPrimary" to="/login">
-                  Enter
-                </Link>
-                <a className="landingBtnGhost" href="#top">
-                  Back to top
-                </a>
+              <div className="landingEyebrow">SECURITY</div>
+              <div className="landingSideTitle">Dual-path access. Clear boundaries.</div>
+              <div className="landingP">
+                Overseer and Field Agent roles are separated by server-side authorization.
+                Station binding prevents cross-station control.
+              </div>
+              <div className="landingP">
+                NorthBot provides task assistance with Markdown formatting for crisp checklists.
+              </div>
+              <div className="landingLinks">
+                <Link className="landingLink" to="/login">[ AUTHENTICATE ]</Link>
+                <a className="landingLink" href="#top">[ RESET VIEW ]</a>
               </div>
             </div>
           </div>
         </section>
 
         <footer className="landingFooterGiulio">
-          <div>© NORTH-COMMAND • Santa Workshop Layer</div>
+          <div className="landingFooterGrid">
+            <div>
+              <div className="landingFooterTitle">NORTH-COMMAND</div>
+              <div className="landingFooterText">Realtime industrial orchestration for Santa’s Workshop.</div>
+            </div>
+            <div>
+              <div className="landingFooterTitle">STACK</div>
+              <div className="landingFooterText">React + TypeScript • Express • MongoDB • Socket.IO</div>
+            </div>
+            <div>
+              <div className="landingFooterTitle">ACCESS</div>
+              <div className="landingFooterText">
+                <Link className="landingFooterLink" to="/login">Enter Console</Link>
+              </div>
+            </div>
+          </div>
+          <div className="landingFooterBottom">© {new Date().getFullYear()} • Operational UI • Dark winter accent</div>
         </footer>
       </main>
     </div>
