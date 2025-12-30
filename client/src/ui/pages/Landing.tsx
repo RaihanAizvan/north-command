@@ -104,9 +104,12 @@ export default function Landing() {
 
       <header className="landingTopNav">
         <div className="landingTopNavInner landingTopNavInnerEdge">
-          <Link to="/login" className="landingTopCta">
-            Enter Console
-          </Link>
+          <nav className="landingNavSci">
+            <a className="landingNavLink" href="#plan">Plan</a>
+            <a className="landingNavLink" href="#review">Review</a>
+            <a className="landingNavLink" href="#security">Security</a>
+            <Link to="/login" className="landingTopCta">Enter Console</Link>
+          </nav>
         </div>
       </header>
 
@@ -116,9 +119,7 @@ export default function Landing() {
             <div className="landingSideCard">
               <div className="landingEyebrow">NORTH-COMMAND</div>
               <div className="landingSideTitle">Industrial task control for Santa’s Workshop.</div>
-              <div className="landingP">
-                A secure orchestration platform for Santa’s Workshop: elves execute with focus; Santa sees the entire floor in realtime.
-              </div>
+              <div className="landingP">Elf management for Santa.</div>
               <div className="landingLinks">
                 <Link className="landingLink" to="/login">[ ENTER CONSOLE ]</Link>
                 <a className="landingLink" href="#plan">[ READ BRIEF ]</a>
@@ -160,7 +161,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="landingBlock" data-section="REVIEW">
+        <section id="review" className="landingBlock" data-section="REVIEW">
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">REVIEW</div>
@@ -183,7 +184,7 @@ export default function Landing() {
           <div className="landingSideSpacer" />
         </section>
 
-        <section className="landingBlock" data-section="CELEBRATE">
+        <section id="security" className="landingBlock" data-section="CELEBRATE">
           <div className="landingSideSpacer" />
           <div className="landingSide landingSideRight">
             <div className="landingSideCard">

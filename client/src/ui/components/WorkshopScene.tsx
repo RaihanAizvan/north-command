@@ -442,12 +442,18 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
         rimGreen.intensity = 0.62 + Math.cos(t * 1.05) * 0.07;
       }
 
-      // animate holographic platform
+      // animate holographic platform (colorful)
       const pulse = 0.06 + Math.max(0, Math.sin(t * 0.9)) * 0.08;
       ringOuter.material.opacity = pulse;
       (ringMid.material as THREE.MeshBasicMaterial).opacity = pulse * 0.75;
       (ringInner.material as THREE.MeshBasicMaterial).opacity = pulse * 0.55;
       scanDisc.material.opacity = 0.06 + Math.max(0, Math.sin(t * 1.1)) * 0.05;
+
+      // hue cycle for a colorful platform without going "neon rave"
+      const hue = (t * 0.04) % 1;
+      (ringOuter.material as THREE.MeshBasicMaterial).color.setHSL(hue, 0.85, 0.55);
+      (ringMid.material as THREE.MeshBasicMaterial).color.setHSL((hue + 0.25) % 1, 0.85, 0.55);
+      (ringInner.material as THREE.MeshBasicMaterial).color.setHSL((hue + 0.55) % 1, 0.85, 0.55);
 
       // slow rotation
       platform.rotation.y = t * 0.12;
