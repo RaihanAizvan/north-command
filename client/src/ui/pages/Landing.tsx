@@ -103,11 +103,7 @@ export default function Landing() {
       </div>
 
       <header className="landingTopNav">
-        <div className="landingTopNavInner">
-          <div className="landingTopBrand">
-            <div className="landingTopBrandMark">NORTH-COMMAND</div>
-            <div className="landingTopBrandSub">Workshop • Tasks • Realtime</div>
-          </div>
+        <div className="landingTopNavInner landingTopNavInnerEdge">
           <Link to="/login" className="landingTopCta">
             Enter Console
           </Link>
@@ -116,74 +112,85 @@ export default function Landing() {
 
       <main className="landingScroll">
         <section className="landingBlock landingHero" data-section="HERO">
-          <div className="landingCopy">
-            <div className="landingKicker">Immersive control. Elegant motion. Subtle 3D.</div>
-            <h1 className="landingH1">Santa’s Workshop task manager — calm, alive, and focused.</h1>
-            <p className="landingP">
-              Scroll-driven narrative. Santa stays centered in the viewport. Cursor interaction is subtle and intentional.
-            </p>
-            <div className="landingActions">
-              <Link className="landingBtnPrimary" to="/login">
-                Login
-              </Link>
-              <a className="landingBtnGhost" href="#plan">
-                Explore
-              </a>
+          <div className="landingSide landingSideLeft">
+            <div className="landingSideCard">
+              <div className="landingKicker">Immersive control • elegant motion</div>
+              <div className="landingSideTitle">Workshop console</div>
+              <div className="landingP">
+                Santa stays visible. The story panels stay on the edges.
+              </div>
+              <div className="landingActions" style={{ marginTop: 12 }}>
+                <Link className="landingBtnPrimary" to="/login">
+                  Enter
+                </Link>
+                <a className="landingBtnGhost" href="#plan">
+                  Brief
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="landingSide landingSideRight">
+            <div className="landingSideCard">
+              <div className="landingH2">Status</div>
+              <div className="landingP" style={{ marginTop: 8 }}>
+                Scroll changes mood. Cursor adds life. Center stays clear.
+              </div>
             </div>
           </div>
         </section>
 
         <section id="plan" className="landingBlock" data-section="PLAN">
-          <div className="landingCopy">
-            <div className="landingH2">Plan</div>
-            <p className="landingP">
-              Tasks align into a sequence. Motion eases with spring-like cadence, synchronized to scroll velocity.
-            </p>
-            <div className="landingRow">
-              <div className="landingMiniCard">
-                <div className="landingMiniTitle">Stations</div>
-                <div className="landingMiniBody">Assign work with clarity and minimal friction.</div>
-              </div>
-              <div className="landingMiniCard">
-                <div className="landingMiniTitle">Batches</div>
-                <div className="landingMiniBody">Track progress across production, QC, and packing.</div>
+          <div className="landingSide landingSideLeft">
+            <div className="landingSideCard">
+              <div className="landingH2">Plan</div>
+              <p className="landingP">Tasks align into a sequence. Motion stays calm and readable.</p>
+              <div className="landingRow">
+                <div className="landingMiniCard">
+                  <div className="landingMiniTitle">Stations</div>
+                  <div className="landingMiniBody">Assign work with clarity and minimal friction.</div>
+                </div>
+                <div className="landingMiniCard">
+                  <div className="landingMiniTitle">Batches</div>
+                  <div className="landingMiniBody">Track progress across production, QC, and packing.</div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         <section className="landingBlock" data-section="REVIEW">
-          <div className="landingCopy">
-            <div className="landingH2">Review</div>
-            <p className="landingP">
-              Santa glances through the grid: distress signals, payload meter, and broadcast controls — realtime and readable.
-            </p>
-            <div className="landingRow">
-              <div className="landingMiniCard">
-                <div className="landingMiniTitle">War Room</div>
-                <div className="landingMiniBody">Every station becomes a status card. No refresh.</div>
-              </div>
-              <div className="landingMiniCard">
-                <div className="landingMiniTitle">NorthBot</div>
-                <div className="landingMiniBody">Markdown replies for crisp instructions and checklists.</div>
+          <div className="landingSide landingSideRight">
+            <div className="landingSideCard">
+              <div className="landingH2">Review</div>
+              <p className="landingP">War-room visibility. Distress signals. Payload progress. Broadcasts.</p>
+              <div className="landingRow">
+                <div className="landingMiniCard">
+                  <div className="landingMiniTitle">War Room</div>
+                  <div className="landingMiniBody">Every station becomes a status card. No refresh.</div>
+                </div>
+                <div className="landingMiniCard">
+                  <div className="landingMiniTitle">NorthBot</div>
+                  <div className="landingMiniBody">Markdown replies for crisp instructions.</div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         <section className="landingBlock" data-section="CELEBRATE">
-          <div className="landingCopy">
-            <div className="landingH2">Completion</div>
-            <p className="landingP">
-              A restrained celebration: warm accents, stable motion, and a clear handoff into the console.
-            </p>
-            <div className="landingActions">
-              <Link className="landingBtnPrimary" to="/login">
-                Enter
-              </Link>
-              <a className="landingBtnGhost" href="#top">
-                Back to top
-              </a>
+          <div className="landingSide landingSideLeft">
+            <div className="landingSideCard">
+              <div className="landingH2">Completion</div>
+              <p className="landingP">A restrained celebration: warm accents, stable motion, and a clean handoff.</p>
+              <div className="landingActions">
+                <Link className="landingBtnPrimary" to="/login">
+                  Enter
+                </Link>
+                <a className="landingBtnGhost" href="#top">
+                  Back to top
+                </a>
+              </div>
             </div>
           </div>
         </section>

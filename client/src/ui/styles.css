@@ -2080,16 +2080,17 @@ a {
   gap: 14px;
   padding: 12px 14px;
   border-radius: calc(var(--radius) + 8px);
-  background: rgba(8,10,16,0.72);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+  background: rgba(8,10,16,0.40);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45);
   backdrop-filter: blur(14px);
   pointer-events: auto;
 }
 
-.landingTopBrand { display: grid; gap: 3px; }
-.landingTopBrandMark { font-weight: 900; letter-spacing: 2px; font-size: 12px; }
-.landingTopBrandSub { color: var(--muted); font-size: 12px; }
+.landingTopNavInnerEdge {
+  max-width: 1180px;
+  justify-content: flex-end;
+}
 
 .landingTopCta {
   text-decoration: none;
@@ -2112,12 +2113,40 @@ a {
 }
 
 .landingBlock {
-  max-width: 980px;
+  max-width: 1180px;
   margin: 0 auto;
   min-height: 92vh;
-  display: grid;
-  align-items: center;
+  position: relative;
   padding: 40px 0;
+}
+
+.landingSide {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(420px, 42vw);
+}
+
+.landingSideLeft { left: 0; }
+.landingSideRight { right: 0; }
+
+.landingSideCard {
+  border-radius: calc(var(--radius) + 12px);
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(180deg, rgba(8,10,16,0.62), rgba(8,10,16,0.40));
+  backdrop-filter: blur(16px);
+  box-shadow: 0 22px 70px rgba(0,0,0,0.55);
+  padding: 18px;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 700ms ease, transform 900ms cubic-bezier(0.2, 0.9, 0.15, 1);
+}
+
+.landingBlock.inView .landingSideCard { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 920px) {
+  .landingSide { position: relative; top: auto; transform: none; width: 100%; }
+  .landingSideLeft, .landingSideRight { left: auto; right: auto; }
 }
 
 .landingCopy {
@@ -2180,6 +2209,13 @@ a {
 .landingH1 { margin: 12px 0 0 0; font-weight: 950; letter-spacing: -0.6px; font-size: clamp(34px, 4.2vw, 56px); }
 .landingH2 { font-weight: 950; letter-spacing: 0.6px; text-transform: uppercase; font-size: 12px; color: rgba(255,255,255,0.80); }
 .landingP { margin: 10px 0 0 0; max-width: 760px; line-height: 1.6; color: rgba(255,255,255,0.75); }
+
+.landingSideTitle {
+  margin-top: 10px;
+  font-weight: 950;
+  letter-spacing: -0.5px;
+  font-size: 28px;
+}
 
 .landingActions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
 

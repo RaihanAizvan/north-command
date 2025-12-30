@@ -95,13 +95,33 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     ring.position.y = -0.795;
     root.add(ring);
 
-    // Back haze plane to help depth (keeps it premium)
+    // Background: aurora-like haze + stars (non-plain, still dark-premium)
     const haze = new THREE.Mesh(
-      new THREE.PlaneGeometry(30, 18),
-      new THREE.MeshBasicMaterial({ color: 0x050607, transparent: true, opacity: 0.35 })
+      new THREE.PlaneGeometry(40, 24),
+      new THREE.MeshBasicMaterial({ color: 0x060912, transparent: true, opacity: 0.55 })
     );
-    haze.position.set(0, 3.0, -9);
+    haze.position.set(0, 3.2, -10);
     root.add(haze);
+
+    const aurora = new THREE.Mesh(
+      new THREE.PlaneGeometry(40, 24),
+      new THREE.MeshBasicMaterial({ color: 0x0b1430, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending })
+    );
+    aurora.position.set(0, 3.4, -9.8);
+    root.add(aurora);
+
+    const starCount = 900;
+    const starGeo = new THREE.BufferGeometry();
+    const starPos = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      starPos[i * 3 + 0] = (Math.random() - 0.5) * 40;
+      starPos[i * 3 + 1] = Math.random() * 22 + 2;
+      starPos[i * 3 + 2] = -12 - Math.random() * 20;
+    }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    const starMat = new THREE.PointsMaterial({ color: 0xd8e7ff, size: 0.02, transparent: true, opacity: 0.45, depthWrite: false });
+    const stars = new THREE.Points(starGeo, starMat);
+    root.add(stars);
 
     // Snow particles
     const snowCount = 1400;
@@ -125,74 +145,9 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     const snow = new THREE.Points(snowGeo, snowMat);
     root.add(snow);
 
-    // 3D "text" without loading fonts: use planes with canvas textures.
-    // Title as "extruded" illusion by layering multiple planes.
-    function makeTextTexture(text: string, opts: { size: number; color: string; glow?: string; weight?: number }) {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('2D context missing');
-
-      const padding = 80;
-      canvas.width = 2048;
-      canvas.height = 512;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      ctx.font = `${opts.weight ?? 900} ${opts.size}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace`;
-
-      // glow
-      if (opts.glow) {
-        ctx.shadowColor = opts.glow;
-        ctx.shadowBlur = 40;
-      }
-      ctx.fillStyle = opts.color;
-      ctx.fillText(text, padding, canvas.height / 2);
-
-      const tex = new THREE.CanvasTexture(canvas);
-      tex.anisotropy = 4;
-      tex.minFilter = THREE.LinearFilter;
-      tex.magFilter = THREE.LinearFilter;
-      tex.needsUpdate = true;
-      return tex;
-    }
-
-    function makeTextPlane(tex: THREE.Texture, w: number, h: number, opacity: number, additive = false) {
-      const mat = new THREE.MeshBasicMaterial({
-        map: tex,
-        transparent: true,
-        opacity,
-        depthWrite: false,
-        blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending,
-      });
-      return new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
-    }
-
-    const titleTex = makeTextTexture('NORTH-COMMAND', { size: 170, color: 'rgba(255,255,255,0.95)', glow: 'rgba(32,255,154,0.25)' });
-    const titleGroup = new THREE.Group();
-
-    // layer planes slightly behind to fake extrusion
-    for (let i = 0; i < 7; i++) {
-      const p = makeTextPlane(titleTex, 4.6, 1.1, 0.10 + i * 0.06, true);
-      p.position.z = -i * 0.01;
-      p.position.y = -i * 0.002;
-      titleGroup.add(p);
-    }
-
-    titleGroup.position.set(0, 2.45, -0.2);
-    titleGroup.rotation.x = -0.08;
-    root.add(titleGroup);
-
-    const subTex = makeTextTexture('SANTA WORKSHOP • REALTIME TASK CONTROL', {
-      size: 86,
-      color: 'rgba(255,176,32,0.90)',
-      glow: 'rgba(255,176,32,0.20)',
-      weight: 800,
-    });
-    const sub = makeTextPlane(subTex, 4.0, 0.55, 0.75, true);
-    sub.position.set(0, 1.75, 0.2);
-    sub.rotation.x = -0.06;
-    root.add(sub);
+    // Remove in-scene branding text; keep the center clear for Santa.
+    const titleGroup: THREE.Group | null = null;
+    const sub: THREE.Object3D | null = null;
 
     // GLB Santa
     const loader = new GLTFLoader();
@@ -346,11 +301,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
         torsoBone.rotation.x = lerp(torsoBone.rotation.x, pitch * 0.35, 0.08);
       }
 
-      // 3D text drift synced to cursor/scroll
-      titleGroup.position.x = px * 0.30;
-      titleGroup.position.y = 2.45 + Math.sin(t * 0.3) * 0.03 + vNorm * -0.02;
-      sub.position.x = px * 0.22;
-      sub.position.y = 1.75 + Math.sin(t * 0.32 + 1) * 0.02;
+      // Keep center clear; no in-scene text drift
 
       // Context-aware scene mode: posture / lighting "mood"
       // (We keep this restrained: small shifts only.)
