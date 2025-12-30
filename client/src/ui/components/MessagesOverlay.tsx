@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { apiUrl } from '../api';
 import { useAuthStore } from '../state/auth';
 import { useChatStore } from '../state/chat';
 import { Avatar } from './Avatar';
+import LoadingSpinner from './LoadingSpinner';
 
 type Peer = { _id: string; username: string };
 
 async function authGet<T>(url: string, token: string): Promise<T> {
-  const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  const r = await fetch(apiUrl(url), { headers: { Authorization: `Bearer ${token}` } });
   if (!r.ok) throw new Error('Request failed');
   return r.json();
 }
@@ -17,6 +19,7 @@ export default function MessagesOverlay({ peers, onClose }: { peers: Peer[]; onC
 
   const [mode, setMode] = useState<'list' | 'chat'>(currentPeerId ? 'chat' : 'list');
   const [text, setText] = useState('');
+  const [loadingThread, setLoadingThread] = useState(false);
   const endRef = useRef<HTMLDivElement | null>(null);
 
   const active = useMemo(() => peers.find((p) => p._id === currentPeerId) ?? null, [peers, currentPeerId]);
@@ -28,13 +31,18 @@ export default function MessagesOverlay({ peers, onClose }: { peers: Peer[]; onC
 
   async function openPeer(p: Peer) {
     if (!token) return;
-    setCurrentPeer(p._id);
-    const hist = await authGet<{ _id: string; fromUserId: string; toUserId: string; message: string; createdAt: string }[]>(
-      `/api/chat/dm/${p._id}`,
-      token
-    );
-    prependHistory(p._id, hist);
-    setMode('chat');
+    setLoadingThread(true);
+    try {
+      setCurrentPeer(p._id);
+      const hist = await authGet<{ _id: string; fromUserId: string; toUserId: string; message: string; createdAt: string }[]>(
+        `/api/chat/dm/${p._id}`,
+        token
+      );
+      prependHistory(p._id, hist);
+      setMode('chat');
+    } finally {
+      setLoadingThread(false);
+    }
   }
 
   const typingText = currentPeerId && typing[currentPeerId] ? 'Typing…' : '';
@@ -81,12 +89,15 @@ export default function MessagesOverlay({ peers, onClose }: { peers: Peer[]; onC
             </div>
 
             <div className="overlayThread">
-              {thread.map((m) => (
-                <div key={m._id} className={`msgBubble ${m.self ? 'me' : 'them'}`}>
-                  <div className="msgText">{m.message}</div>
-                  <div className="msgMeta">{new Date(m.createdAt).toLocaleTimeString()}</div>
-                </div>
-              ))}
+              {loadingThread ? <LoadingSpinner label="Loading messages" /> : null}
+              {!loadingThread
+                ? thread.map((m) => (
+                    <div key={m._id} className={`msgBubble ${m.self ? 'me' : 'them'}`}>
+                      <div className="msgText">{m.message}</div>
+                      <div className="msgMeta">{new Date(m.createdAt).toLocaleTimeString()}</div>
+                    </div>
+                  ))
+                : null}
               <div ref={endRef} />
             </div>
 

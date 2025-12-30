@@ -22,7 +22,10 @@ export default function ElfManagementPage() {
     if (!token) return;
     const ok = confirm('Delete this elf account? This cannot be undone.');
     if (!ok) return;
-    await fetch(`/api/admin/elves/${elfId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    await fetch(((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '') + `/api/admin/elves/${elfId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
     setElves((prev) => prev.filter((e) => e._id !== elfId));
   }
 
@@ -30,7 +33,9 @@ export default function ElfManagementPage() {
     if (!token) return;
     setModalElf(elf);
     setModalTasks(null);
-    const list = await fetch(`/api/admin/elves/${elf._id}/tasks`, { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json());
+    const list = await fetch(((import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '') + `/api/admin/elves/${elf._id}/tasks`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then((r) => r.json());
     setModalTasks(list);
   }
 

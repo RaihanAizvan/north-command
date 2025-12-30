@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { apiUrl } from '../api';
+import LoadingSpinner from './LoadingSpinner';
 import { useAuthStore } from '../state/auth';
 
 export type Notification = {
@@ -12,13 +14,13 @@ export type Notification = {
 type Tab = 'ALL' | 'UNREAD';
 
 async function getJson<T>(url: string, token: string): Promise<T> {
-  const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  const r = await fetch(apiUrl(url), { headers: { Authorization: `Bearer ${token}` } });
   if (!r.ok) throw new Error('Request failed');
   return r.json();
 }
 
 async function patchJson<T>(url: string, token: string, body: unknown): Promise<T> {
-  const r = await fetch(url, {
+  const r = await fetch(apiUrl(url), {
     method: 'PATCH',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -33,15 +35,18 @@ export default function NotificationsInbox({ onUnreadChange }: { onUnreadChange?
   const [items, setItems] = useState<Notification[]>([]);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [busyAll, setBusyAll] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!token) return;
+    setLoading(true);
     getJson<Notification[]>('/api/notifications', token)
       .then((list) => {
         setItems(list);
         onUnreadChange?.(list.filter((n) => !n.readAt).length);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [token, onUnreadChange]);
 
   const unreadCount = useMemo(() => items.filter((n) => !n.readAt).length, [items]);
@@ -99,7 +104,8 @@ export default function NotificationsInbox({ onUnreadChange }: { onUnreadChange?
       </div>
 
       <div className="inboxList">
-        {filtered.length === 0 ? <div className="inboxEmpty">No notifications.</div> : null}
+        {loading ? <LoadingSpinner label="Loading notifications" /> : null}
+        {!loading && filtered.length === 0 ? <div className="inboxEmpty">No notifications.</div> : null}
         {filtered.map((n) => (
           <div key={n._id} className={`inboxItem ${n.readAt ? 'read' : 'unread'}`} title={n.message}>
             <div className="inboxIcon" aria-hidden>
