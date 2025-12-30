@@ -258,9 +258,13 @@ export default function Landing() {
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">SYSTEM STATUS</div>
-              <div className="landingBig">
-                Realtime orchestration for tasks.
-              </div>
+              <AnimatedText
+                text="Realtime orchestration for tasks."
+                as="div"
+                className="landingBig"
+                seed={202}
+                variant="glitchFlip"
+              />
               <div className="landingP">
                 Assign, retrain and gain the tasks to elfs. Elfs can chat with santa in realtime
               </div>
@@ -316,9 +320,13 @@ export default function Landing() {
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">REVIEW</div>
-              <div className="landingSideTitle">
-                Realtime Chat:
-              </div>
+              <AnimatedText
+                text="Realtime Chat:"
+                as="div"
+                className="landingSideTitle"
+                seed={505}
+                variant="glitchFlip"
+              />
               <div className="landingP">
                 Every tasks is transparant
                 <span className="landingDot landingDotGreen" /> Active
