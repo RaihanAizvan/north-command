@@ -115,7 +115,7 @@ export default function Landing() {
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">NORTH-COMMAND</div>
-              <div className="landingSideTitle">Industrial task control, dressed in winter light.</div>
+              <div className="landingSideTitle">Industrial task control for Santa’s Workshop.</div>
               <div className="landingP">
                 A secure orchestration platform for Santa’s Workshop: elves execute with focus; Santa sees the entire floor in realtime.
               </div>
