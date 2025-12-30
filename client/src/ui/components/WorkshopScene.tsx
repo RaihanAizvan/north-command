@@ -124,9 +124,9 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     root.add(platform);
 
     const ringMat = new THREE.MeshBasicMaterial({
-      color: 0x20ff9a,
+      color: 0x9ffcff,
       transparent: true,
-      opacity: 0.12,
+      opacity: 0.18,
       side: THREE.DoubleSide,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
@@ -169,8 +169,8 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     scanTex.magFilter = THREE.LinearFilter;
 
     const scanDisc = new THREE.Mesh(
-      new THREE.CircleGeometry(2.1, 128),
-      new THREE.MeshBasicMaterial({ map: scanTex, transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending, depthWrite: false })
+      new THREE.CircleGeometry(2.25, 128),
+      new THREE.MeshBasicMaterial({ map: scanTex, transparent: true, opacity: 0.14, blending: THREE.AdditiveBlending, depthWrite: false })
     );
     scanDisc.rotation.x = -Math.PI / 2;
     scanDisc.position.y = 0.001;
@@ -443,17 +443,17 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       }
 
       // animate holographic platform (colorful)
-      const pulse = 0.06 + Math.max(0, Math.sin(t * 0.9)) * 0.08;
+      const pulse = 0.10 + Math.max(0, Math.sin(t * 0.9)) * 0.14;
       ringOuter.material.opacity = pulse;
-      (ringMid.material as THREE.MeshBasicMaterial).opacity = pulse * 0.75;
-      (ringInner.material as THREE.MeshBasicMaterial).opacity = pulse * 0.55;
-      scanDisc.material.opacity = 0.06 + Math.max(0, Math.sin(t * 1.1)) * 0.05;
+      (ringMid.material as THREE.MeshBasicMaterial).opacity = pulse * 0.85;
+      (ringInner.material as THREE.MeshBasicMaterial).opacity = pulse * 0.70;
+      scanDisc.material.opacity = 0.10 + Math.max(0, Math.sin(t * 1.1)) * 0.10;
 
-      // hue cycle for a colorful platform without going "neon rave"
-      const hue = (t * 0.04) % 1;
-      (ringOuter.material as THREE.MeshBasicMaterial).color.setHSL(hue, 0.85, 0.55);
-      (ringMid.material as THREE.MeshBasicMaterial).color.setHSL((hue + 0.25) % 1, 0.85, 0.55);
-      (ringInner.material as THREE.MeshBasicMaterial).color.setHSL((hue + 0.55) % 1, 0.85, 0.55);
+      // hue cycle (lighter + more attractive): cyan → magenta → amber
+      const hue = (t * 0.035) % 1;
+      (ringOuter.material as THREE.MeshBasicMaterial).color.setHSL((hue + 0.50) % 1, 0.95, 0.66);
+      (ringMid.material as THREE.MeshBasicMaterial).color.setHSL((hue + 0.86) % 1, 0.95, 0.64);
+      (ringInner.material as THREE.MeshBasicMaterial).color.setHSL((hue + 0.10) % 1, 0.95, 0.62);
 
       // slow rotation
       platform.rotation.y = t * 0.12;
