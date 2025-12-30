@@ -9,6 +9,7 @@ import MessagesOverlay from './MessagesOverlay';
 import ToastHost, { Toast } from './ToastHost';
 import SnowLayer, { getSavedSnow, saveSnow, SnowIntensity } from './SnowLayer';
 import { Avatar } from './Avatar';
+import { useAiChatStore } from '../state/aiChat';
 import { BellIcon, ChatIcon, MenuIcon, SnowIcon, TreeIcon } from './HeaderIcons';
 
 type Peer = { _id: string; username: string };
@@ -66,7 +67,7 @@ export default function AppLayout() {
           if (!stop) setPeers(list.map((x) => ({ _id: x._id, username: x.username })));
         } else if (role === 'FIELD_AGENT') {
           const santa = await authGet<{ _id: string; username: string }>('/api/chat/overseer', token);
-          if (!stop) setPeers([santa]);
+          if (!stop) setPeers([{ _id: 'NORTHBOT', username: 'NorthBot' }, santa]);
         }
       } finally {
         if (!stop) setLoadingPeers(false);
@@ -111,6 +112,14 @@ export default function AppLayout() {
   async function openDm(peer: Peer) {
     if (!token) return;
     if (!isDesktop) setMessagesOpen(true);
+
+    // AI bot conversation is handled locally
+    if (peer._id === 'NORTHBOT') {
+      setCurrentPeer(peer._id);
+      useAiChatStore.getState().reset();
+      return;
+    }
+
     setCurrentPeer(peer._id);
     const hist = await authGet<{ _id: string; fromUserId: string; toUserId: string; message: string; createdAt: string }[]>(
       `/api/chat/dm/${peer._id}`,

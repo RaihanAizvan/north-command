@@ -4,6 +4,7 @@ import { useAuthStore } from '../state/auth';
 import { useChatStore } from '../state/chat';
 import { Avatar } from './Avatar';
 import LoadingSpinner from './LoadingSpinner';
+import { useAiChatStore } from '../state/aiChat';
 
 function dayKey(iso: string) {
   const d = new Date(iso);
@@ -40,6 +41,7 @@ async function authGet<T>(url: string, token: string): Promise<T> {
 export default function MessagesOverlay({ peers, onClose }: { peers: Peer[]; onClose: () => void }) {
   const { token, role } = useAuthStore();
   const { currentPeerId, setCurrentPeer, prependHistory, messages, unread, send, emitTyping, typing } = useChatStore();
+  const ai = useAiChatStore();
 
   const [mode, setMode] = useState<'list' | 'chat'>(currentPeerId ? 'chat' : 'list');
   const [text, setText] = useState('');
@@ -47,7 +49,12 @@ export default function MessagesOverlay({ peers, onClose }: { peers: Peer[]; onC
   const endRef = useRef<HTMLDivElement | null>(null);
 
   const active = useMemo(() => peers.find((p) => p._id === currentPeerId) ?? null, [peers, currentPeerId]);
-  const thread = currentPeerId ? messages[currentPeerId] ?? [] : [];
+  const isBot = currentPeerId === 'NORTHBOT';
+  const thread = currentPeerId
+    ? isBot
+      ? ai.messages.map((m) => ({ _id: m.id, self: m.self, fromUserId: m.self ? 'me' : 'bot', message: m.text, createdAt: m.createdAt }))
+      : messages[currentPeerId] ?? []
+    : [];
 
   useEffect(() => {
     if (!currentPeerId) setMode('list');
@@ -58,6 +65,13 @@ export default function MessagesOverlay({ peers, onClose }: { peers: Peer[]; onC
     setLoadingThread(true);
     try {
       setCurrentPeer(p._id);
+
+      if (p._id === 'NORTHBOT') {
+        ai.reset();
+        setMode('chat');
+        return;
+      }
+
       const hist = await authGet<{ _id: string; fromUserId: string; toUserId: string; message: string; createdAt: string }[]>(
         `/api/chat/dm/${p._id}`,
         token
@@ -113,7 +127,7 @@ export default function MessagesOverlay({ peers, onClose }: { peers: Peer[]; onC
             </div>
 
             <div className="overlayThread">
-              {loadingThread ? <LoadingSpinner label="Loading messages" /> : null}
+              {loadingThread || (isBot && ai.loading) ? <LoadingSpinner label={isBot ? 'NorthBot is thinking' : 'Loading messages'} /> : null}
 
               {!loadingThread
                 ? thread.map((m, idx) => {
@@ -148,19 +162,22 @@ export default function MessagesOverlay({ peers, onClose }: { peers: Peer[]; onC
                 if (!currentPeerId) return;
                 const msg = text.trim();
                 if (!msg) return;
-                void send(currentPeerId, msg);
+                if (isBot) {
+                  void ai.send(msg);
+                } else {
+                  void send(currentPeerId, msg);
+                }
                 setText('');
-                // Ensure we scroll after the message is appended (socket echo)
                 setTimeout(() => endRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' }), 50);
               }}
             >
               <textarea
                 className="chatInput"
                 value={text}
-                placeholder="Write a message…"
+                placeholder={isBot ? 'Ask NorthBot…' : 'Write a message…'}
                 onChange={(e) => {
                   setText(e.target.value);
-                  if (currentPeerId) emitTyping(currentPeerId);
+                  if (!isBot && currentPeerId) emitTyping(currentPeerId);
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {

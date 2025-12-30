@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuthStore } from '../state/auth';
 import { useChatStore } from '../state/chat';
+import { useAiChatStore } from '../state/aiChat';
 
 function groupKey(m: { self?: boolean; fromUserId: string }) {
   return `${m.self ? 'me' : 'them'}:${m.fromUserId}`;
@@ -28,17 +29,24 @@ function timeLabel(iso: string) {
 export default function ChatPane() {
   const { token } = useAuthStore();
   const { currentPeerId, peers, messages, send, typing, emitTyping } = useChatStore();
+  const { messages: aiMsgs, loading: aiLoading, send: aiSend } = useAiChatStore();
   const [text, setText] = useState('');
   const endRef = useRef<HTMLDivElement | null>(null);
 
   const peer = useMemo(() => peers.find((p) => p._id === currentPeerId) ?? null, [peers, currentPeerId]);
-  const thread = currentPeerId ? messages[currentPeerId] ?? [] : [];
+  const isBot = currentPeerId === 'NORTHBOT';
+  const thread = currentPeerId
+    ? isBot
+      ? aiMsgs.map((m) => ({ _id: m.id, self: m.self, fromUserId: m.self ? 'me' : 'bot', message: m.text, createdAt: m.createdAt }))
+      : (messages[currentPeerId] ?? [])
+    : [];
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: 'end' });
   }, [thread.length, currentPeerId]);
 
-  const threadLoading = currentPeerId != null && messages[currentPeerId] == null;
+  const threadLoading =
+    currentPeerId != null && (isBot ? aiLoading : messages[currentPeerId] == null);
 
   if (!token) return null;
 
@@ -96,17 +104,21 @@ export default function ChatPane() {
           if (!currentPeerId) return;
           const msg = text.trim();
           if (!msg) return;
-          void send(currentPeerId, msg);
+          if (isBot) {
+            void aiSend(msg);
+          } else {
+            void send(currentPeerId, msg);
+          }
           setText('');
         }}
       >
         <textarea
           className="chatInput"
           value={text}
-          placeholder={currentPeerId ? 'Message…' : 'Select a DM'}
+          placeholder={currentPeerId ? (isBot ? 'Ask NorthBot…' : 'Message…') : 'Select a DM'}
           onChange={(e) => {
             setText(e.target.value);
-            if (currentPeerId) emitTyping(currentPeerId);
+            if (!isBot && currentPeerId) emitTyping(currentPeerId);
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
