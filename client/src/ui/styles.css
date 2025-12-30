@@ -1383,16 +1383,18 @@ a {
 .chatThread {
   padding: 12px;
   overflow: auto;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 6px;
   background: #070a10;
+  align-content: flex-start;
 }
 
 .chatEmpty { color: var(--muted); }
 
-.chatMsg { display: grid; }
-.chatMsg.me { justify-items: end; }
-.chatMsg.them { justify-items: start; }
+.chatMsg { display: flex; flex-direction: column; }
+.chatMsg.me { align-items: flex-end; }
+.chatMsg.them { align-items: flex-start; }
 
 .chatBubble {
   max-width: 85%;
@@ -1736,7 +1738,8 @@ a {
   padding: 12px;
   min-height: 0;
   overflow: auto;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   background: #070a10;
   padding-bottom: 6px;
