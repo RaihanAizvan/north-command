@@ -124,6 +124,10 @@ export default function Login() {
       onPointerDown={(e) => updateGaze(e.clientX, e.clientY)}
     >
       <div className="loginAtmos" aria-hidden>
+        <picture className="loginBg">
+          <source media="(max-width: 720px)" srcSet="/bg-santa-mobile.png" />
+          <img src="/bg-santa.png" alt="" draggable={false} />
+        </picture>
         <div className="loginHalo" />
         <div className="loginVeil" />
         <div className="loginVignette" />
