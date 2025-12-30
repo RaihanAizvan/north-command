@@ -2162,6 +2162,8 @@ a {
   justify-content: flex-start;
 }
 
+.landingSideSpacer { width: min(520px, 36vw); }
+
 .landingSideRight { justify-content: flex-end; text-align: right; }
 
 .landingSideCard {
@@ -2262,18 +2264,20 @@ a {
 
 .landingSideTitle {
   margin-top: 12px;
-  font-family: var(--font-display-a);
+  font-family: var(--font-display-b);
   font-weight: 400;
-  letter-spacing: -1.2px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
   font-size: clamp(52px, 5.4vw, 78px);
-  line-height: 0.96;
+  line-height: 0.98;
 }
 
 .landingBig {
   margin-top: 10px;
   font-family: var(--font-display-b);
   font-weight: 400;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   font-size: clamp(30px, 3.0vw, 40px);
   color: rgba(255,255,255,0.92);
 }
@@ -2346,10 +2350,11 @@ a {
 }
 
 .landingFooterTitle {
-  font-weight: 950;
-  letter-spacing: 2px;
+  font-family: var(--font-display-b);
+  font-weight: 400;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  font-size: 11px;
+  font-size: 12px;
   color: rgba(255,255,255,0.78);
 }
 

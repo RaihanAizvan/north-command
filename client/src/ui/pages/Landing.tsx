@@ -120,27 +120,29 @@ export default function Landing() {
                 A secure orchestration platform for Santa’s Workshop: elves execute with focus; Santa sees the entire floor in realtime.
               </div>
               <div className="landingLinks">
-                <Link className="landingLink" to="/login">
-                  [ ENTER CONSOLE ]
-                </Link>
-                <a className="landingLink" href="#plan">
-                  [ READ BRIEF ]
-                </a>
+                <Link className="landingLink" to="/login">[ ENTER CONSOLE ]</Link>
+                <a className="landingLink" href="#plan">[ READ BRIEF ]</a>
               </div>
             </div>
           </div>
+          <div className="landingSideSpacer" />
+        </section>
 
-          <div className="landingSide landingSideRight">
+        <section className="landingBlock" data-section="STATUS">
+          <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">SYSTEM STATUS</div>
               <div className="landingBig">Realtime orchestration for the final window.</div>
-              <div className="landingP">Scroll sets the narrative. Santa remains in view. Interaction stays restrained.</div>
+              <div className="landingP">Socket.IO pushes station distress, work-order transitions, and broadcasts without refresh.</div>
+              <div className="landingP">The center stays clear so Santa is always visible — the interface stays on the edges.</div>
             </div>
           </div>
+          <div className="landingSideSpacer" />
         </section>
 
         <section id="plan" className="landingBlock" data-section="PLAN">
-          <div className="landingSide landingSideLeft">
+          <div className="landingSideSpacer" />
+          <div className="landingSide landingSideRight">
             <div className="landingSideCard">
               <div className="landingEyebrow">PLAN</div>
               <div className="landingSideTitle">One station. One work-order. No noise.</div>
@@ -159,7 +161,7 @@ export default function Landing() {
         </section>
 
         <section className="landingBlock" data-section="REVIEW">
-          <div className="landingSide landingSideRight">
+          <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">REVIEW</div>
               <div className="landingSideTitle">Overseer view: the War Room grid.</div>
@@ -178,10 +180,12 @@ export default function Landing() {
               </div>
             </div>
           </div>
+          <div className="landingSideSpacer" />
         </section>
 
         <section className="landingBlock" data-section="CELEBRATE">
-          <div className="landingSide landingSideLeft">
+          <div className="landingSideSpacer" />
+          <div className="landingSide landingSideRight">
             <div className="landingSideCard">
               <div className="landingEyebrow">SECURITY</div>
               <div className="landingSideTitle">Dual-path access. Clear boundaries.</div>
