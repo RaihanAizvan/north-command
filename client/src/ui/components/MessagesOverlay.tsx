@@ -5,6 +5,7 @@ import { useChatStore } from '../state/chat';
 import { Avatar } from './Avatar';
 import LoadingSpinner from './LoadingSpinner';
 import { useAiChatStore } from '../state/aiChat';
+import Markdown from './Markdown';
 
 function dayKey(iso: string) {
   const d = new Date(iso);
@@ -143,7 +144,7 @@ export default function MessagesOverlay({ peers, onClose }: { peers: Peer[]; onC
                         {newDay ? <div className="daySep"><span>{dayLabel(m.createdAt)}</span></div> : null}
                         <div className={`bubbleRow ${m.self ? 'me' : 'them'} ${isGroupEnd ? 'tail' : ''} ${isGroupStart ? 'start' : 'cont'}`}>
                           <div className={`bubble ${m.self ? 'me' : 'them'}`}>
-                            <div className="bubbleText">{m.message}</div>
+                            <div className="bubbleText">{isBot && !m.self ? <Markdown text={m.message} /> : m.message}</div>
                             <div className="bubbleMeta">{timeLabel(m.createdAt)}</div>
                           </div>
                         </div>

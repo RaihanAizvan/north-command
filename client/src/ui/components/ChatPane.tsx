@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuthStore } from '../state/auth';
 import { useChatStore } from '../state/chat';
 import { useAiChatStore } from '../state/aiChat';
+import Markdown from './Markdown';
 
 function groupKey(m: { self?: boolean; fromUserId: string }) {
   return `${m.self ? 'me' : 'them'}:${m.fromUserId}`;
@@ -85,7 +86,7 @@ export default function ChatPane() {
 
                   <div className={`bubbleRow ${m.self ? 'me' : 'them'} ${isGroupEnd ? 'tail' : ''} ${isGroupStart ? 'start' : 'cont'}`}>
                     <div className={`bubble ${m.self ? 'me' : 'them'}`}>
-                      <div className="bubbleText">{m.message}</div>
+                      <div className="bubbleText">{isBot && !m.self ? <Markdown text={m.message} /> : m.message}</div>
                       <div className="bubbleMeta">{timeLabel(m.createdAt)}</div>
                     </div>
                   </div>
