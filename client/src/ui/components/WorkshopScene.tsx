@@ -44,7 +44,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     scene.fog = new THREE.Fog(0x050607, 5, 20);
 
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 1.5, 7.2);
+    camera.position.set(0, 1.55, 6.2);
 
     // Root group (we can subtly move/scale everything if needed)
     const root = new THREE.Group();
@@ -73,7 +73,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
 
     // Floor (obsidian, slightly reflective look)
     const floor = new THREE.Mesh(
-      new THREE.CircleGeometry(7.5, 64),
+      new THREE.CircleGeometry(9.0, 64),
       new THREE.MeshStandardMaterial({ color: 0x070a0d, metalness: 0.25, roughness: 0.86 })
     );
     floor.rotation.x = -Math.PI / 2;
@@ -82,7 +82,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
 
     // Subtle ring glow (fake reflection / aura)
     const ring = new THREE.Mesh(
-      new THREE.RingGeometry(1.5, 2.2, 96),
+      new THREE.RingGeometry(1.9, 2.8, 96),
       new THREE.MeshBasicMaterial({
         color: 0x20ff9a,
         transparent: true,
@@ -238,7 +238,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
 
         santa.position.sub(center);
 
-        const targetHeight = 2.6;
+        const targetHeight = 3.6; // make Santa more dominant in frame
         const scale = targetHeight / Math.max(0.0001, size.y);
         santa.scale.setScalar(scale);
         santa.position.y = -0.75; // sit on floor
@@ -263,7 +263,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
     controls.rotateSpeed = 0.6;
     controls.minPolarAngle = Math.PI / 2 - 0.55;
     controls.maxPolarAngle = Math.PI / 2 + 0.35;
-    controls.target.set(0, 0.9, 0);
+    controls.target.set(0, 1.15, 0);
 
     let lastInteract = performance.now();
     const markInteract = () => (lastInteract = performance.now());
@@ -332,7 +332,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       // Scroll velocity gives subtle camera push/pull (calm, not chaotic)
       const v = clamp(input.scrollVelocity, -40, 40);
       const vNorm = v / 40;
-      camera.position.z = 7.2 + vNorm * 0.35;
+      camera.position.z = 6.2 + vNorm * 0.28;
 
       // Cursor: slight head/torso tracking (tight limit)
       const yaw = clamp(px * 0.22, -0.18, 0.18);

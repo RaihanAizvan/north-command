@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SceneLayout from '../components/SceneLayout';
 import { apiUrl } from '../api';
 import { useAuthStore } from '../state/auth';
 
@@ -18,6 +19,23 @@ async function postJson<T>(url: string, body: unknown): Promise<T> {
     throw new Error(err.message ?? 'Request failed');
   }
   return res.json() as Promise<T>;
+}
+
+function useInView() {
+  useEffect(() => {
+    const els = Array.from(document.querySelectorAll<HTMLElement>('[data-inview]'));
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const el = e.target as HTMLElement;
+          if (e.isIntersecting) el.classList.add('inView');
+        }
+      },
+      { threshold: 0.2 }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 }
 
 export default function Login() {
@@ -77,146 +95,67 @@ export default function Login() {
     }
   }
 
-  const [gaze, setGaze] = useState({ x: 0, y: 0 });
-
-  const portrait = useMemo(() => {
-    if (mode === 'OVERSEER') return '/santa.png';
-    if (registerMode) return '/dark-elf.png';
-    return '/cute-elf.png';
-  }, [mode, registerMode]);
-
-  const portraitAnim = useMemo(() => {
-    if (mode === 'OVERSEER') return 'portraitAnimDefault';
-    if (registerMode) return 'portraitAnimDarkElf';
-    return 'portraitAnimDefault';
-  }, [mode, registerMode]);
-
-  const [portraitNonce, setPortraitNonce] = useState(0);
-  useEffect(() => {
-    // Force remount of the portrait to restart CSS animation on mode change.
-    setPortraitNonce((n) => n + 1);
-  }, [portrait]);
-
-  const [seed] = useState(() => {
-    // deterministic-ish per mount
-    return Array.from({ length: 40 }).map((_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      size: 1.8 + Math.random() * 3.4,
-      drift: 10 + Math.random() * 20,
-      delay: Math.random() * 8,
-      opacity: 0.14 + Math.random() * 0.22,
-    }));
-  });
-
-  function updateGaze(clientX: number, clientY: number) {
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight * 0.38;
-    const dx = Math.max(-10, Math.min(10, (clientX - cx) / 60));
-    const dy = Math.max(-10, Math.min(10, (clientY - cy) / 60));
-    setGaze({ x: dx, y: dy });
-  }
+  useInView();
 
   return (
-    <div
-      className="loginScene"
-      onPointerMove={(e) => updateGaze(e.clientX, e.clientY)}
-      onPointerDown={(e) => updateGaze(e.clientX, e.clientY)}
+    <SceneLayout
+      mode={mode === 'OVERSEER' ? 'REVIEW' : mode === 'FIELD_AGENT' ? 'PLAN' : 'HERO'}
+      topRight={
+        <a className="landingBtnGhost" href="/" style={{ pointerEvents: 'auto' }}>
+          Home
+        </a>
+      }
     >
-      <div className="loginAtmos" aria-hidden>
-        <picture className="loginBg">
-          <source media="(max-width: 720px)" srcSet="/bg-santa-mobile.png" />
-          <img src="/bg-santa.png" alt="" draggable={false} />
-        </picture>
-        <div className="loginHalo" />
-        <div className="loginVeil" />
-        <div className="loginVignette" />
-        <div className="loginStars" aria-hidden />
-        <div className="loginParticles">
-          {seed.map((p) => (
-            <span
-              key={p.id}
-              className="loginParticle"
-              style={{
-                left: `${p.left}%`,
-                top: `${p.top}%`,
-                width: p.size,
-                height: p.size,
-                opacity: p.opacity,
-                animationDuration: `${p.drift}s`,
-                animationDelay: `${p.delay}s`,
-              }}
-            />
-          ))}
-        </div>
-      </div>
+      <section className="sceneSection">
+        <div className="sceneCard" data-inview>
+          <div className="landingKicker">Threshold access • scroll flow</div>
+          <h1 className="landingH1">Secure entry.</h1>
+          <p className="landingP">Choose a role. Then provide credentials. The scene stays alive behind the interface.</p>
 
-      <div className="loginFrame">
-        <div className="loginSigil" aria-hidden>
-          <div className="sigilOuter">
-            <div className="sigilInner" />
-          </div>
-          <div
-            className="sigilGaze"
-            style={{
-              transform: `translate(${gaze.x}px, ${gaze.y}px)`,
-            }}
-          />
-          <div
-            className="sigilPortrait"
-            style={{
-              transform: `translate3d(${gaze.x * 0.35}px, ${gaze.y * 0.35}px, 0) rotateX(${(-gaze.y * 0.75).toFixed(2)}deg) rotateY(${(gaze.x * 0.75).toFixed(2)}deg)`,
-            }}
-          >
-            <img key={`${portrait}-${portraitNonce}`} className={portraitAnim} src={portrait} alt="" draggable={false} />
-          </div>
-        </div>
-
-        <div className="loginCard" role="region" aria-label="Access">
-          <div className="loginHeader">
-            <div className="loginKicker">North Command</div>
-            <div className="loginTitle">Threshold Access</div>
-            <div className="loginSubtitle">{title}</div>
-          </div>
-
-          <div className="loginModes" role="tablist" aria-label="Access mode">
+          <div className="landingActions" style={{ marginTop: 14 }}>
             <button
-              className={`loginMode ${mode === 'FIELD_AGENT' && !registerMode ? 'active' : ''}`}
+              className={mode === 'FIELD_AGENT' && !registerMode ? 'landingBtnPrimary' : 'landingBtnGhost'}
               onClick={() => {
                 setMode('FIELD_AGENT');
                 setRegisterMode(false);
               }}
               type="button"
-              role="tab"
             >
               Field Agent
             </button>
             <button
-              className={`loginMode ${mode === 'FIELD_AGENT' && registerMode ? 'active' : ''}`}
+              className={mode === 'FIELD_AGENT' && registerMode ? 'landingBtnPrimary' : 'landingBtnGhost'}
               onClick={() => {
                 setMode('FIELD_AGENT');
                 setRegisterMode(true);
               }}
               type="button"
-              role="tab"
             >
               Register
             </button>
             <button
-              className={`loginMode ${mode === 'OVERSEER' ? 'active' : ''}`}
+              className={mode === 'OVERSEER' ? 'landingBtnPrimary' : 'landingBtnGhost'}
               onClick={() => {
                 setMode('OVERSEER');
                 setRegisterMode(false);
               }}
               type="button"
-              role="tab"
             >
               Overseer
             </button>
           </div>
 
-          <div className="loginFields">
+          <div className="landingP" style={{ marginTop: 12, color: 'rgba(255,255,255,0.60)' }}>
+            Scroll continues. Drag the scene to rotate.
+          </div>
+        </div>
+      </section>
+
+      <section className="sceneSection">
+        <div className="sceneCard" data-inview>
+          <div className="landingH2">Credentials</div>
+
+          <div className="landingRow" style={{ marginTop: 14 }}>
             <label className="relicField">
               <span className="relicLabel">Identity</span>
               <input
@@ -243,6 +182,21 @@ export default function Login() {
             </label>
           </div>
 
+          {mode === 'FIELD_AGENT' ? (
+            <div style={{ marginTop: 12 }}>
+              <label className="relicField">
+                <span className="relicLabel">Station Code</span>
+                <input
+                  className="relicInput"
+                  value={stationCode}
+                  onChange={(e) => setStationCode(e.target.value)}
+                  placeholder="A-01"
+                />
+                <span className="relicGlow" aria-hidden />
+              </label>
+            </div>
+          ) : null}
+
           {error ? <div className="loginError">{error}</div> : null}
 
           <div className="loginActions">
@@ -263,7 +217,11 @@ export default function Login() {
             <div className="loginNote">This channel is monitored. Proceed with intent.</div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      <footer className="landingFooterGiulio" style={{ paddingTop: 0 }}>
+        <div>© NORTH-COMMAND • Secure Access</div>
+      </footer>
+    </SceneLayout>
   );
 }
