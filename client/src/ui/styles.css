@@ -2003,61 +2003,57 @@ a {
 }
 
 /* ------------------------------
-   Landing Page (Three.js 3D)
+   Landing Page (Giulio-inspired scroll narrative)
    ------------------------------ */
 
-.landing3dRoot {
+.landingGiulio {
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
 }
 
-.landing3d {
+.landingSceneFixed {
   position: fixed;
   inset: 0;
   z-index: 0;
+  pointer-events: auto; /* allow orbit drag */
 }
 
-.landing3dHud {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  padding: 18px;
-  display: grid;
-  grid-template-rows: auto 1fr auto auto;
-  gap: 18px;
+.landing3d {
+  position: absolute;
+  inset: 0;
+}
+
+.landingTopNav {
+  position: fixed;
+  top: 14px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 0 18px;
   pointer-events: none;
 }
 
-/* Allow interaction only on UI elements */
-.landing3dHud a { pointer-events: auto; }
-
-.landing3dTop {
+.landingTopNavInner {
+  max-width: 1180px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 14px;
   padding: 12px 14px;
-  border-radius: calc(var(--radius) + 10px);
-  border: 1px solid var(--panel-border);
+  border-radius: calc(var(--radius) + 8px);
   background: rgba(8,10,16,0.72);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
   backdrop-filter: blur(14px);
-  box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+  pointer-events: auto;
 }
 
-.landing3dBrand {
-  font-weight: 900;
-  letter-spacing: 2px;
-  font-size: 12px;
-}
+.landingTopBrand { display: grid; gap: 3px; }
+.landingTopBrandMark { font-weight: 900; letter-spacing: 2px; font-size: 12px; }
+.landingTopBrandSub { color: var(--muted); font-size: 12px; }
 
-.landing3dSub {
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 3px;
-}
-
-.landing3dEnter {
+.landingTopCta {
   text-decoration: none;
   padding: 10px 14px;
   border-radius: 999px;
@@ -2069,23 +2065,45 @@ a {
   text-transform: uppercase;
 }
 
-.landing3dEnter:hover { background: rgba(255,77,77,0.18); transform: translateY(-1px); }
+.landingTopCta:hover { background: rgba(255,77,77,0.18); transform: translateY(-1px); }
 
-.landing3dHero {
-  max-width: 980px;
-  align-self: center;
-  padding: 18px;
-  border-radius: calc(var(--radius) + 12px);
-  border: 1px solid rgba(255,255,255,0.10);
-  background: linear-gradient(180deg, rgba(8,10,16,0.70), rgba(8,10,16,0.55));
-  backdrop-filter: blur(16px);
-  box-shadow: 0 22px 70px rgba(0,0,0,0.60);
+.landingScroll {
+  position: relative;
+  z-index: 2;
+  padding: 120px 18px 80px 18px;
 }
 
-.landing3dKicker {
-  display: inline-flex;
-  gap: 8px;
+.landingBlock {
+  max-width: 980px;
+  margin: 0 auto;
+  min-height: 92vh;
+  display: grid;
   align-items: center;
+  padding: 40px 0;
+}
+
+.landingCopy {
+  width: min(720px, 92vw);
+  border-radius: calc(var(--radius) + 12px);
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(180deg, rgba(8,10,16,0.70), rgba(8,10,16,0.48));
+  backdrop-filter: blur(16px);
+  box-shadow: 0 22px 70px rgba(0,0,0,0.60);
+  padding: 18px;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 700ms ease, transform 900ms cubic-bezier(0.2, 0.9, 0.15, 1);
+}
+
+/* reveal sequencing */
+.landingBlock.inView .landingCopy { opacity: 1; transform: translateY(0); }
+
+/* velocity influence: fast scroll reduces blur + fades more quickly */
+.landingGiulio.vFast .landingCopy { transition-duration: 420ms, 600ms; }
+.landingGiulio.vMed .landingCopy { transition-duration: 560ms, 760ms; }
+
+.landingKicker {
+  display: inline-flex;
   padding: 7px 10px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.10);
@@ -2097,23 +2115,13 @@ a {
   font-weight: 900;
 }
 
-.landing3dTitle {
-  margin-top: 12px;
-  font-weight: 950;
-  letter-spacing: -0.6px;
-  font-size: clamp(34px, 4.2vw, 56px);
-}
+.landingH1 { margin: 12px 0 0 0; font-weight: 950; letter-spacing: -0.6px; font-size: clamp(34px, 4.2vw, 56px); }
+.landingH2 { font-weight: 950; letter-spacing: 0.6px; text-transform: uppercase; font-size: 12px; color: rgba(255,255,255,0.80); }
+.landingP { margin: 10px 0 0 0; max-width: 760px; line-height: 1.6; color: rgba(255,255,255,0.75); }
 
-.landing3dBody {
-  margin-top: 12px;
-  max-width: 760px;
-  line-height: 1.6;
-  color: rgba(255,255,255,0.75);
-}
+.landingActions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
 
-.landing3dActions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
-
-.landing3dPrimary {
+.landingBtnPrimary {
   text-decoration: none;
   padding: 11px 16px;
   border-radius: 999px;
@@ -2125,9 +2133,9 @@ a {
   text-transform: uppercase;
 }
 
-.landing3dPrimary:hover { transform: translateY(-1px); }
+.landingBtnPrimary:hover { transform: translateY(-1px); }
 
-.landing3dSecondary {
+.landingBtnGhost {
   text-decoration: none;
   padding: 11px 16px;
   border-radius: 999px;
@@ -2139,34 +2147,34 @@ a {
   text-transform: uppercase;
 }
 
-.landing3dSecondary:hover { transform: translateY(-1px); }
+.landingBtnGhost:hover { transform: translateY(-1px); }
 
-.landing3dBrief {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  max-width: 980px;
-}
+.landingRow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
 
-.landing3dCard {
+.landingMiniCard {
   border-radius: calc(var(--radius) + 4px);
   border: 1px solid rgba(255,255,255,0.10);
-  background: linear-gradient(180deg, rgba(8,10,16,0.62), rgba(8,10,16,0.46));
-  backdrop-filter: blur(14px);
+  background: rgba(255,255,255,0.04);
   padding: 14px;
-  box-shadow: 0 18px 60px rgba(0,0,0,0.45);
 }
 
-.landing3dCardTitle { font-weight: 950; letter-spacing: 0.6px; text-transform: uppercase; font-size: 12px; }
-.landing3dCardBody { margin-top: 8px; color: rgba(255,255,255,0.72); line-height: 1.5; }
+.landingMiniTitle { font-weight: 900; }
+.landingMiniBody { margin-top: 8px; color: rgba(255,255,255,0.70); line-height: 1.55; }
 
-.landing3dFooter {
+.landingFooterGiulio {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 22px 0 0 0;
   color: rgba(255,255,255,0.55);
   font-size: 12px;
-  padding: 4px 2px 10px 2px;
 }
 
-@media (max-width: 960px) {
-  .landing3dBrief { grid-template-columns: 1fr; }
+@media (max-width: 860px) {
+  .landingRow { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landingCopy { opacity: 1; transform: none; transition: none; }
+  .landingTopCta:hover, .landingBtnPrimary:hover, .landingBtnGhost:hover { transform: none; }
 }
 

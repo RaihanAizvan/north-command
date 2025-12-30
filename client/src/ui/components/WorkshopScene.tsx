@@ -13,8 +13,22 @@ function clamp(n: number, a: number, b: number) {
   return Math.max(a, Math.min(b, n));
 }
 
-export default function WorkshopScene() {
+type SceneMode = 'HERO' | 'PLAN' | 'REVIEW' | 'CELEBRATE';
+
+type WorkshopSceneProps = {
+  scrollProgress: number; // 0..1
+  scrollVelocity: number; // px/frame-ish
+  mode: SceneMode;
+};
+
+export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: WorkshopSceneProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
+
+  // store latest values without reinitializing three
+  const inputsRef = useRef({ scrollProgress: 0, scrollVelocity: 0, mode: 'HERO' as SceneMode });
+  inputsRef.current.scrollProgress = scrollProgress;
+  inputsRef.current.scrollVelocity = scrollVelocity;
+  inputsRef.current.mode = mode;
 
   useEffect(() => {
     const host = hostRef.current;
@@ -183,6 +197,8 @@ export default function WorkshopScene() {
     // GLB Santa
     const loader = new GLTFLoader();
     let santa: THREE.Object3D | null = null;
+    let headBone: THREE.Object3D | null = null;
+    let torsoBone: THREE.Object3D | null = null;
 
     const santaUrl = '/model/santa-claus/source/Santa.glb';
 
@@ -193,6 +209,13 @@ export default function WorkshopScene() {
 
         // Make sure materials look good in our lighting
         santa.traverse((obj) => {
+          // capture bones for subtle pose control
+          const anyObj = obj as any;
+          if (anyObj.isBone && typeof obj.name === 'string') {
+            if (!headBone && /head/i.test(obj.name)) headBone = obj;
+            if (!torsoBone && /(spine|chest|upperchest|torso)/i.test(obj.name)) torsoBone = obj;
+          }
+
           const mesh = obj as THREE.Mesh;
           if (!mesh.isMesh) return;
           mesh.castShadow = false;
@@ -233,7 +256,8 @@ export default function WorkshopScene() {
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
-    controls.enableZoom = false;
+    controls.enableZoom = false; // allow page scroll; no zoom
+    controls.enableRotate = true;
     controls.enableDamping = true;
     controls.dampingFactor = 0.07;
     controls.rotateSpeed = 0.6;
@@ -262,7 +286,7 @@ export default function WorkshopScene() {
     ro.observe(host);
     resize();
 
-    // Cursor influence (subtle), separate from orbit
+    // Cursor influence (subtle)
     const pointer = { x: 0.5, y: 0.5 };
     const target = { x: 0.5, y: 0.5 };
 
@@ -270,6 +294,8 @@ export default function WorkshopScene() {
       const r = host.getBoundingClientRect();
       target.x = (e.clientX - r.left) / Math.max(1, r.width);
       target.y = (e.clientY - r.top) / Math.max(1, r.height);
+      // mark interaction so auto-rotate pauses while user is active
+      lastInteract = performance.now();
     };
     window.addEventListener('pointermove', onMove, { passive: true });
 
@@ -292,21 +318,67 @@ export default function WorkshopScene() {
       if (!running) return;
       const t = clock.getElapsedTime();
 
-      // Cursor parallax
+      // Inputs (scroll + cursor) with gentle inertia
+      const input = inputsRef.current;
       pointer.x = lerp(pointer.x, target.x, 0.05);
       pointer.y = lerp(pointer.y, target.y, 0.05);
       const px = pointer.x - 0.5;
       const py = pointer.y - 0.5;
 
-      titleGroup.position.x = px * 0.25;
-      sub.position.x = px * 0.18;
+      // Scroll-linked hero rotation (Giulio-style): Santa turns with scroll progress
+      const scrollTurn = (input.scrollProgress - 0.5) * 0.9; // ~[-0.45..0.45]
+      if (santa) santa.rotation.y = scrollTurn;
+
+      // Scroll velocity gives subtle camera push/pull (calm, not chaotic)
+      const v = clamp(input.scrollVelocity, -40, 40);
+      const vNorm = v / 40;
+      camera.position.z = 7.2 + vNorm * 0.35;
+
+      // Cursor: slight head/torso tracking (tight limit)
+      const yaw = clamp(px * 0.22, -0.18, 0.18);
+      const pitch = clamp(-py * 0.18, -0.14, 0.14);
+      if (headBone) {
+        headBone.rotation.y = lerp(headBone.rotation.y, yaw, 0.10);
+        headBone.rotation.x = lerp(headBone.rotation.x, pitch, 0.10);
+      }
+      if (torsoBone) {
+        torsoBone.rotation.y = lerp(torsoBone.rotation.y, yaw * 0.55, 0.08);
+        torsoBone.rotation.x = lerp(torsoBone.rotation.x, pitch * 0.35, 0.08);
+      }
+
+      // 3D text drift synced to cursor/scroll
+      titleGroup.position.x = px * 0.30;
+      titleGroup.position.y = 2.45 + Math.sin(t * 0.3) * 0.03 + vNorm * -0.02;
+      sub.position.x = px * 0.22;
+      sub.position.y = 1.75 + Math.sin(t * 0.32 + 1) * 0.02;
+
+      // Context-aware scene mode: posture / lighting "mood"
+      // (We keep this restrained: small shifts only.)
+      if (input.mode === 'PLAN') {
+        rimGreen.intensity = 0.78 + Math.cos(t * 1.05) * 0.06;
+        rimRed.intensity = 0.62 + Math.sin(t * 1.1) * 0.05;
+        ring.material.color.setHex(0x20ff9a);
+      } else if (input.mode === 'REVIEW') {
+        rimGreen.intensity = 0.58 + Math.cos(t * 1.05) * 0.05;
+        rimRed.intensity = 0.78 + Math.sin(t * 1.1) * 0.06;
+        ring.material.color.setHex(0xff3344);
+      } else if (input.mode === 'CELEBRATE') {
+        rimGreen.intensity = 0.80 + Math.cos(t * 1.25) * 0.09;
+        rimRed.intensity = 0.82 + Math.sin(t * 1.2) * 0.09;
+        ring.material.color.setHex(0xffb020);
+      } else {
+        rimRed.intensity = 0.80 + Math.sin(t * 1.1) * 0.08;
+        rimGreen.intensity = 0.62 + Math.cos(t * 1.05) * 0.07;
+        ring.material.color.setHex(0x20ff9a);
+      }
+
       ring.material.opacity = 0.08 + Math.max(0, Math.sin(t * 0.9)) * 0.06;
 
-      // Idle auto-rotate when not interacting
+      // Idle auto-rotate when not interacting (very gentle)
       const idleMs = performance.now() - lastInteract;
-      if (!reduced && idleMs > 1800) {
+      if (!reduced && idleMs > 1500) {
         controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.55;
+        controls.autoRotateSpeed = 0.28;
       } else {
         controls.autoRotate = false;
       }
@@ -323,14 +395,10 @@ export default function WorkshopScene() {
         pos.needsUpdate = true;
       }
 
-      // Breathe accent lights
-      rimRed.intensity = 0.80 + Math.sin(t * 1.1) * 0.08;
-      rimGreen.intensity = 0.62 + Math.cos(t * 1.05) * 0.07;
-
-      // Subtle Santa presentation: if loaded, lightly bob
+      // Subtle Santa presentation: lightly bob + very small breathing tilt
       if (santa && !reduced) {
-        santa.rotation.y = santa.rotation.y; // left to controls (rotates camera)
         santa.position.y = -0.75 + Math.sin(t * 0.6) * 0.01;
+        santa.rotation.x = Math.sin(t * 0.35) * 0.01;
       }
 
       controls.update();
