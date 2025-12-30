@@ -78,6 +78,12 @@ export default function Login() {
 
   const [gaze, setGaze] = useState({ x: 0, y: 0 });
 
+  const portrait = useMemo(() => {
+    if (mode === 'OVERSEER') return '/santa.png';
+    if (registerMode) return '/dark-elf.png';
+    return '/cute-elf.png';
+  }, [mode, registerMode]);
+
   const [seed] = useState(() => {
     // deterministic-ish per mount
     return Array.from({ length: 28 }).map((_, i) => ({
@@ -106,6 +112,7 @@ export default function Login() {
       onPointerDown={(e) => updateGaze(e.clientX, e.clientY)}
     >
       <div className="loginAtmos" aria-hidden>
+        <img className="loginBanner" src="/top-banner-hanging-lights.png" alt="" />
         <div className="loginHalo" />
         <div className="loginVeil" />
         <div className="loginVignette" />
@@ -133,7 +140,20 @@ export default function Login() {
           <div className="sigilOuter">
             <div className="sigilInner" />
           </div>
-          <div className="sigilGaze" style={{ transform: `translate(${gaze.x}px, ${gaze.y}px)` }} />
+          <div
+            className="sigilGaze"
+            style={{
+              transform: `translate(${gaze.x}px, ${gaze.y}px)`,
+            }}
+          />
+          <div
+            className="sigilPortrait"
+            style={{
+              transform: `translate(${gaze.x * 1.2}px, ${gaze.y * 1.2}px) rotateX(${(-gaze.y * 0.4).toFixed(2)}deg) rotateY(${(gaze.x * 0.4).toFixed(2)}deg)`,
+            }}
+          >
+            <img src={portrait} alt="" draggable={false} />
+          </div>
         </div>
 
         <div className="loginCard" role="region" aria-label="Access">
