@@ -529,6 +529,10 @@ a {
 @media (max-width: 520px) {
   .loginTitle { font-size: 22px; }
   .loginCard { padding: 18px; }
+
+  /* Reduce portrait dominance on phones */
+  .sigilPortrait { width: 260px; height: 260px; margin-left: -130px; margin-top: -130px; }
+  .sigilPortrait img { width: 118%; height: 118%; margin-left: -9%; margin-top: -9%; }
 }
 
 .input {
