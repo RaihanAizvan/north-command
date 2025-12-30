@@ -5,7 +5,7 @@ import { useAuthStore } from '../state/auth';
 
 type LoginMode = 'OVERSEER' | 'FIELD_AGENT';
 
-type AgentAuthResponse = { token: string; role: 'FIELD_AGENT'; stationId?: string };
+type AgentAuthResponse = { token: string; role: 'FIELD_AGENT' };
 
 async function postJson<T>(url: string, body: unknown): Promise<T> {
   const res = await fetch(apiUrl(url), {
@@ -30,7 +30,6 @@ export default function Login() {
   const [mode, setMode] = useState<LoginMode>('FIELD_AGENT');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [stationCode, setStationCode] = useState('');
   const [registerMode, setRegisterMode] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -61,15 +60,14 @@ export default function Login() {
           username,
           password,
         });
-        setAuth({ token: r.token, role: 'FIELD_AGENT', stationId: r.stationId ?? null });
+        setAuth({ token: r.token, role: 'FIELD_AGENT' });
         nav('/elf');
       } else {
         const r = await postJson<AgentAuthResponse>('/api/auth/login/agent', {
           username,
           password,
-          stationCode: stationCode.trim(),
         });
-        setAuth({ token: r.token, role: 'FIELD_AGENT', stationId: r.stationId ?? null });
+        setAuth({ token: r.token, role: 'FIELD_AGENT' });
         nav('/elf');
       }
     } catch (e) {
@@ -244,18 +242,6 @@ export default function Login() {
               <span className="relicGlow" aria-hidden />
             </label>
 
-            {mode === 'FIELD_AGENT' && !registerMode ? (
-              <label className="relicField">
-                <span className="relicLabel">Station Code</span>
-                <input
-                  className="relicInput"
-                  value={stationCode}
-                  onChange={(e) => setStationCode(e.target.value)}
-                  placeholder="A-01"
-                />
-                <span className="relicGlow" aria-hidden />
-              </label>
-            ) : null}
           </div>
 
           {error ? <div className="loginError">{error}</div> : null}
