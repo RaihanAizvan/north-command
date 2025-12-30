@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useSmoothScroll, smoothScrollToHash } from '../hooks/useSmoothScroll';
+import PortalEnter from '../components/PortalEnter';
 
 import WorkshopScene from "../components/WorkshopScene";
 import { useAuthStore } from "../state/auth";
@@ -35,6 +36,7 @@ function clamp(n: number, a: number, b: number) {
 }
 
 export default function Landing() {
+  const nav = useNavigate();
   const { token, role } = useAuthStore();
   const effectiveRole = role ?? roleFromToken(token);
   if (token)
@@ -46,6 +48,12 @@ export default function Landing() {
 
   const [mode, setMode] = useState<Mode>("HERO");
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [portalZoom, setPortalZoom] = useState<{ active: boolean; x: number; y: number }>({
+    active: false,
+    x: 0.75,
+    y: 0.2,
+  });
+
   const [scrollVelocity, setScrollVelocity] = useState(0);
 
   const sectionsRef = useRef<Record<string, HTMLElement | null>>({});
@@ -117,7 +125,16 @@ export default function Landing() {
   }, [scrollVelocity]);
 
   return (
-    <div className={`landingGiulio ${velocityClass}`} data-mode={mode}>
+    <div
+      className={`landingGiulio ${velocityClass} ${portalZoom.active ? 'portalZooming' : ''}`}
+      data-mode={mode}
+      style={{
+        // used by css for transform-origin / zoom focus
+        ['--portal-x' as any]: `${portalZoom.x * 100}%`,
+        ['--portal-y' as any]: `${portalZoom.y * 100}%`,
+      }}
+    >
+      <div className="portalOverlay" aria-hidden="true" />
       {/* Always visible scene layer (does not block scroll) */}
       <div className="landingSceneFixed">
         <WorkshopScene
@@ -175,21 +192,27 @@ export default function Landing() {
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">NORTH-COMMAND</div>
-              <div className="landingSideTitle">
-                Task Management tool for <span style={{color:"red"}}>santa</span>
-              </div>
-              <div className="landingP">AI powered elf manager.</div>
+              <div className="landingSideTitle">A Task Management tool for <span style={{ color: 'red' }}>santa</span></div>
+              <div className="landingP">Santa is bored without a tool for managing tasks with elfs. Here is the utimate task manament tool that santa really needs.</div>
+              <div className="landingP">North Command is a commanding tool, where overseer (santa) can assign and manage tasks to agents(elfs)</div>
+              <div className="landingP">It also hav features like analytics, Live chat, notification managemt etc</div>
               <div className="landingLinks">
-                <Link className="landingLink" to="/login">
-                  [ ENTER CONSOLE ]
-                </Link>
-                <a className="landingLink" href="#plan">
-                  [ READ BRIEF ]
-                </a>
+                <a className="landingLink" href="#plan">[ READ BRIEF ]</a>
               </div>
             </div>
           </div>
-          <div className="landingSideSpacer" />
+
+          <div className="landingSide landingSideRight">
+            <div className="landingSideCard">
+              <PortalEnter
+                onEnter={({ originX, originY }) => {
+                  if (portalZoom.active) return;
+                  setPortalZoom({ active: true, x: originX, y: originY });
+                  window.setTimeout(() => nav('/login'), 900);
+                }}
+              />
+            </div>
+          </div>
         </section>
 
                 <section id="plan" className="landingBlock" data-section="PLAN">
