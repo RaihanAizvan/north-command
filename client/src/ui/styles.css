@@ -52,6 +52,20 @@ a {
   color: inherit;
 }
 
+/* Hide scrollbars globally (keep scrolling) */
+* {
+  scrollbar-width: none; /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
 /* App shell */
 .app {
   min-height: 100vh;
@@ -197,6 +211,345 @@ a {
 }
 
 /* Inputs & buttons */
+
+/* Cinematic login */
+.loginScene {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 40px 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+.loginAtmos { position: absolute; inset: 0; pointer-events: none; }
+
+.loginBg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.42;
+  transform: scale(1.02);
+  filter: saturate(0.95) contrast(1.05) brightness(0.82);
+}
+
+.loginBg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.loginStars {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1px 1px at 42% 18%, rgba(255,255,255,0.45), transparent 60%),
+    radial-gradient(1px 1px at 60% 42%, rgba(255,255,255,0.35), transparent 60%),
+    radial-gradient(1px 1px at 75% 26%, rgba(255,255,255,0.50), transparent 60%),
+    radial-gradient(1px 1px at 12% 66%, rgba(255,255,255,0.30), transparent 60%),
+    radial-gradient(1px 1px at 88% 62%, rgba(255,255,255,0.28), transparent 60%),
+    radial-gradient(1px 1px at 55% 78%, rgba(255,255,255,0.22), transparent 60%),
+    radial-gradient(1px 1px at 30% 84%, rgba(255,255,255,0.25), transparent 60%);
+  opacity: 0.9;
+  animation: starTwinkle 6s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.75; filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 10px rgba(255,255,255,0.08)); }
+}
+
+.loginHalo {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(700px 500px at 50% 35%, rgba(255,77,77,0.14), transparent 65%),
+    radial-gradient(600px 420px at 60% 60%, rgba(101,240,165,0.08), transparent 70%),
+    radial-gradient(800px 520px at 35% 70%, rgba(255,255,255,0.05), transparent 70%);
+  filter: blur(0px);
+  animation: loginBreath 10s ease-in-out infinite;
+}
+
+@keyframes loginBreath {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.02); opacity: 1; }
+}
+
+.loginVeil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(900px 600px at 50% 30%, rgba(0,0,0,0.10), rgba(4, 4, 4, 0.46)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.038), rgba(0, 0, 0, 0.176));
+}
+
+.loginVignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, transparent 34%, rgba(0, 0, 0, 0.074) 82%);
+}
+
+.loginParticles { position: absolute; inset: 0; }
+.loginParticle {
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 0 14px rgba(255,255,255,0.12);
+  filter: blur(0.55px);
+  animation: particleDrift linear infinite;
+}
+
+@keyframes particleDrift {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(0, -140px, 0); }
+}
+
+.loginFrame {
+  width: min(980px, 100%);
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 18px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.loginSigil {
+  border-radius: 26px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(11,16,24,0.40);
+  min-height: 460px;
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+  perspective: 900px;
+}
+
+.sigilOuter {
+  position: absolute;
+  inset: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,77,77,0.18);
+  background: radial-gradient(circle at 30% 30%, rgba(255,77,77,0.12), transparent 60%);
+  filter: blur(0px);
+}
+
+.sigilInner {
+  position: absolute;
+  inset: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: radial-gradient(circle at 45% 55%, rgba(255,255,255,0.06), transparent 55%);
+}
+
+.sigilGaze {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: 90px;
+  height: 90px;
+  margin-left: -45px;
+  margin-top: -45px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, rgba(255,77,77,0.22), rgba(255,255,255,0.05));
+  box-shadow: 0 0 0 6px rgba(255,77,77,0.08), 0 40px 90px rgba(0,0,0,0.55);
+  transition: transform 180ms ease;
+}
+
+.sigilPortrait {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: 430px;
+  height: 430px;
+  margin-left: -215px;
+  margin-top: -215px;
+  transform-style: preserve-3d;
+  transition: transform 220ms ease;
+  filter: drop-shadow(0 34px 90px rgba(0,0,0,0.70));
+}
+
+.sigilPortrait img {
+  width: 130%;
+  height: 130%;
+  margin-left: -15%;
+  margin-top: -15%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-select: none;
+  transform: translateZ(18px);
+}
+
+.sigilPortrait img.portraitAnimDefault {
+  animation: portraitIn 850ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+@keyframes portraitIn {
+  0% { opacity: 0; transform: translateZ(18px) scale(0.92) translate3d(0, 16px, 0); }
+  100% { opacity: 1; transform: translateZ(18px) scale(1) translate3d(0, 0, 0); }
+}
+
+.sigilPortrait img.portraitAnimDarkElf {
+  animation: portraitDarkElf 950ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+@keyframes portraitDarkElf {
+  0% { opacity: 0; transform: translateZ(18px) scale(0.88) translate3d(-30px, 10px, 0) rotate(-2deg); }
+  100% { opacity: 1; transform: translateZ(18px) scale(1) translate3d(0, 0, 0) rotate(0deg); }
+}
+
+.loginCard {
+  border-radius: 26px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(11,16,24,0.72);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.60);
+  padding: 22px;
+}
+
+.loginKicker {
+  font-size: 12px;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+.loginTitle {
+  margin-top: 10px;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  color: rgba(255,255,255,0.92);
+}
+
+.loginSubtitle {
+  margin-top: 8px;
+  color: rgba(190,205,235,0.72);
+}
+
+.loginModes {
+  margin-top: 18px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.loginMode {
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.22);
+  color: rgba(255,255,255,0.75);
+  padding: 8px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.loginMode.active {
+  border-color: rgba(255,77,77,0.30);
+  background: rgba(255,77,77,0.10);
+  color: rgba(255,255,255,0.95);
+}
+
+.loginFields {
+  margin-top: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.relicField {
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.18);
+  padding: 12px 12px 10px 12px;
+  overflow: hidden;
+}
+
+.relicLabel {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+.relicInput {
+  margin-top: 8px;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: rgba(255,255,255,0.92);
+  font-size: 16px;
+  padding: 0;
+}
+
+.relicGlow {
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(circle at 20% 30%, rgba(255,77,77,0.12), transparent 55%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+
+.relicField:focus-within { border-color: rgba(255,77,77,0.30); }
+.relicField:focus-within .relicGlow { opacity: 1; }
+
+.loginError {
+  margin-top: 12px;
+  border: 1px solid rgba(255,77,77,0.25);
+  background: rgba(255,77,77,0.08);
+  color: rgba(255,255,255,0.88);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.loginActions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.relicBtn {
+  border: 1px solid rgba(255,77,77,0.30);
+  background: rgba(255,77,77,0.14);
+  color: rgba(255,255,255,0.95);
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.relicBtn:hover { transform: translateY(-1px); background: rgba(255,77,77,0.18); }
+.relicBtn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.loginFooter {
+  margin-top: 14px;
+  color: rgba(190,205,235,0.60);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+@media (max-width: 980px) {
+  .loginFrame { grid-template-columns: 1fr; }
+  .loginSigil { min-height: 220px; }
+  .sigilPortrait { width: 320px; height: 320px; margin-left: -160px; margin-top: -160px; }
+  .sigilPortrait img { width: 140%; height: 140%; margin-left: -20%; margin-top: -20%; }
+}
+
+@media (max-width: 520px) {
+  .loginTitle { font-size: 22px; }
+  .loginCard { padding: 18px; }
+
+  /* Reduce portrait dominance on phones */
+  .sigilPortrait { width: 260px; height: 260px; margin-left: -130px; margin-top: -130px; }
+  .sigilPortrait img { width: 118%; height: 118%; margin-left: -9%; margin-top: -9%; }
+}
+
 .input {
   width: 100%;
   padding: 11px 12px;
@@ -1097,6 +1450,54 @@ a {
 }
 
 .rowEnd { display: flex; justify-content: flex-end; }
+
+.analyticsGrid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+/* Elf management responsive rows */
+.elfRow {
+  border: 1px solid rgba(255,255,255,0.06);
+  background: #0b1018;
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.elfMeta { min-width: 0; }
+.elfName { font-weight: 900; }
+.elfSub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+.elfActions { display: inline-flex; gap: 8px; justify-content: flex-end; }
+
+@media (max-width: 980px) {
+  .elfRow {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .elfActions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 980px) {
+  .analyticsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .analyticsGrid {
+    grid-template-columns: 1fr;
+  }
+}
 
 @media (max-width: 980px) {
   .dashGrid { grid-template-columns: 1fr; }

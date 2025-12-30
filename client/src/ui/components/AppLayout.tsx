@@ -252,6 +252,22 @@ export default function AppLayout() {
                 <span className="chanDot" aria-hidden />
                 <span className="chanName">Dashboard</span>
               </NavLink>
+              {role === 'OVERSEER' ? (
+                <>
+                  <NavLink className="sidebarChannel" to="/analytics" onClick={() => setDrawerOpen(false)}>
+                    <span className="chanDot" aria-hidden />
+                    <span className="chanName">Analytics</span>
+                  </NavLink>
+                  <NavLink className="sidebarChannel" to="/elves" onClick={() => setDrawerOpen(false)}>
+                    <span className="chanDot" aria-hidden />
+                    <span className="chanName">Elf Management</span>
+                  </NavLink>
+                  <NavLink className="sidebarChannel" to="/settings" onClick={() => setDrawerOpen(false)}>
+                    <span className="chanDot" aria-hidden />
+                    <span className="chanName">Settings</span>
+                  </NavLink>
+                </>
+              ) : null}
               <button
                 className="sidebarChannel"
                 onClick={() => {
