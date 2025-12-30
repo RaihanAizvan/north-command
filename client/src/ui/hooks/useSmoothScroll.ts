@@ -18,7 +18,7 @@ export function useSmoothScroll(opts?: { enabled?: boolean }) {
       wheelMultiplier: 1.0,
     });
 
-    (window as any).__north_lenis = lenis;
+    (window as unknown as { __north_lenis?: Lenis }).__north_lenis = lenis;
 
     let raf = 0;
     const loop = (time: number) => {
@@ -29,7 +29,7 @@ export function useSmoothScroll(opts?: { enabled?: boolean }) {
 
     return () => {
       cancelAnimationFrame(raf);
-      (window as any).__north_lenis = undefined;
+      (window as unknown as { __north_lenis?: Lenis }).__north_lenis = undefined;
       lenis.destroy();
     };
   }, [opts?.enabled]);
@@ -43,7 +43,7 @@ export async function smoothScrollToHash(hash: string) {
     return;
   }
 
-  const lenis = (window as any).__north_lenis as Lenis | undefined;
+  const lenis = (window as unknown as { __north_lenis?: Lenis }).__north_lenis;
   if (lenis) {
     lenis.scrollTo(hash, { offset: -90, duration: 1.1 });
     return;

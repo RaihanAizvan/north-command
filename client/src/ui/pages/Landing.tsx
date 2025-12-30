@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useSmoothScroll, smoothScrollToHash } from '../hooks/useSmoothScroll';
 import PortalEnter from '../components/PortalEnter';
@@ -129,9 +129,9 @@ export default function Landing() {
       data-mode={mode}
       style={{
         // used by css for transform-origin / zoom focus
-        ['--portal-x' as any]: `${portalZoom.x * 100}%`,
-        ['--portal-y' as any]: `${portalZoom.y * 100}%`,
-      }}
+        ['--portal-x' as const]: `${portalZoom.x * 100}%`,
+        ['--portal-y' as const]: `${portalZoom.y * 100}%`,
+      } as React.CSSProperties}
     >
       <div className="portalOverlay" aria-hidden="true" />
       {/* Always visible scene layer (does not block scroll) */}

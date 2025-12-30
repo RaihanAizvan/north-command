@@ -306,7 +306,7 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
         // Make sure materials look good in our lighting
         santa.traverse((obj) => {
           // capture bones for subtle pose control
-          const anyObj = obj as any;
+          const anyObj = obj as unknown as { isBone?: boolean };
           if (anyObj.isBone && typeof obj.name === 'string') {
             const n = obj.name;
             if (!headBone && /head/i.test(n)) headBone = obj;
@@ -325,8 +325,10 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
           if (!mesh.isMesh) return;
 
           // best-effort smile morph target discovery
-          const anyMesh = mesh as any;
-          const dict = anyMesh.morphTargetDictionary as Record<string, number> | undefined;
+          const anyMesh = mesh as unknown as {
+            morphTargetDictionary?: Record<string, number>;
+          };
+          const dict = anyMesh.morphTargetDictionary;
           if (dict && Object.keys(dict).length) {
             const keys = Object.keys(dict);
             const key = keys.find((k) => /smile|mouthsmile|happy|grin/i.test(k));
@@ -337,12 +339,14 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
           }
           mesh.castShadow = false;
           mesh.receiveShadow = false;
-          const mat = mesh.material as THREE.MeshStandardMaterial | THREE.MeshStandardMaterial[];
+          const mat = mesh.material as THREE.Material | THREE.Material[];
           const mats = Array.isArray(mat) ? mat : [mat];
           for (const m of mats) {
             if (!m) continue;
-            m.metalness = clamp(m.metalness ?? 0.0, 0, 0.5);
-            m.roughness = clamp(m.roughness ?? 0.8, 0.25, 1);
+            if (m instanceof THREE.MeshStandardMaterial) {
+              m.metalness = clamp(m.metalness ?? 0.0, 0, 0.5);
+              m.roughness = clamp(m.roughness ?? 0.8, 0.25, 1);
+            }
           }
         });
 
@@ -534,8 +538,8 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       if (smileTargets.length) {
         const target = 0.35 + Math.max(0, Math.sin(t * 0.35)) * 0.10;
         for (const st of smileTargets) {
-          const anyMesh = st.mesh as any;
-          const infl = anyMesh.morphTargetInfluences as number[] | undefined;
+          const anyMesh = st.mesh as unknown as { morphTargetInfluences?: number[] };
+          const infl = anyMesh.morphTargetInfluences;
           if (!infl) continue;
           infl[st.index] = lerp(infl[st.index] ?? 0, target, 0.08);
         }
@@ -656,8 +660,10 @@ export default function WorkshopScene({ scrollProgress, scrollVelocity, mode }: 
       controls.dispose();
 
       scene.traverse((obj) => {
-        const g = (obj as any).geometry as THREE.BufferGeometry | undefined;
-        const m = (obj as any).material as THREE.Material | THREE.Material[] | undefined;
+        const withGeom = obj as unknown as { geometry?: THREE.BufferGeometry };
+        const withMat = obj as unknown as { material?: THREE.Material | THREE.Material[] };
+        const g = withGeom.geometry;
+        const m = withMat.material;
         if (g) g.dispose();
         if (m) {
           if (Array.isArray(m)) m.forEach((mm) => mm.dispose());
