@@ -67,7 +67,7 @@ export default function AppLayout() {
           if (!stop) setPeers(list.map((x) => ({ _id: x._id, username: x.username })));
         } else if (role === 'FIELD_AGENT') {
           const santa = await authGet<{ _id: string; username: string }>('/api/chat/overseer', token);
-          if (!stop) setPeers([{ _id: 'NORTHBOT', username: 'NorthBot' }, santa]);
+          if (!stop) setPeers([santa, { _id: 'NORTHBOT', username: 'NorthBot' }]);
         }
       } finally {
         if (!stop) setLoadingPeers(false);
