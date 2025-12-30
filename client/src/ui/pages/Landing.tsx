@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useSmoothScroll, smoothScrollToHash } from '../hooks/useSmoothScroll';
 import PortalEnter from '../components/PortalEnter';
+import AnimatedText from '../components/AnimatedText';
 
 import WorkshopScene from "../components/WorkshopScene";
 import { useAuthStore } from "../state/auth";
@@ -192,7 +193,16 @@ export default function Landing() {
           <div className="landingSide landingSideLeft">
             <div className="landingSideCard">
               <div className="landingEyebrow">NORTH-COMMAND</div>
-              <div className="landingSideTitle">A Task Management tool for <span style={{ color: 'red' }}>santa</span></div>
+              <AnimatedText
+                text="A Task Management tool for"
+                as="div"
+                className="landingSideTitle"
+                seed={101}
+                variant="glitchFlip"
+              />
+              <div className="landingSideTitle" style={{ marginTop: 6 }}>
+                <span style={{ color: 'red' }}>santa</span>
+              </div>
               <div className="landingP">Santa is bored without a tool for managing tasks with elfs. Here is the utimate task manament tool that santa really needs.</div>
               <div className="landingP">North Command is a commanding tool, where overseer (santa) can assign and manage tasks to agents(elfs)</div>
               <div className="landingP">It also hav features like analytics, Live chat, notification managemt etc</div>
@@ -275,9 +285,13 @@ export default function Landing() {
           <div className="landingSide landingSideRight">
             <div className="landingSideCard">
               <div className="landingEyebrow">SECURITY</div>
-              <div className="landingSideTitle">
-                Dual-path access. Clear boundaries.
-              </div>
+              <AnimatedText
+                text="Dual-path access. Clear boundaries."
+                as="div"
+                className="landingSideTitle"
+                seed={404}
+                variant="glitchFlip"
+              />
               <div className="landingP">
                 Santa and elf roles are separated by server-side
                 authorization. Station binding prevents cross-station control.

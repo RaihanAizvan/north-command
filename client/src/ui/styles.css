@@ -2268,6 +2268,33 @@ a {
 @keyframes portalDash { from { stroke-dashoffset: 0; opacity: 0.18; } to { stroke-dashoffset: -140; opacity: 0.18; } }
 @keyframes portalDash2 { from { stroke-dashoffset: 0; opacity: 0.14; } to { stroke-dashoffset: 180; opacity: 0.14; } }
 
+/* Per-letter slow glitch/flip text */
+.aText { display: inline-block; }
+.aTextCh { display: inline-block; perspective: 800px; }
+.aTextChInner {
+  display: inline-block;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+  animation-delay: var(--d, 0ms);
+}
+
+.aText.glitchFlip .aTextChInner {
+  animation: aFlipGlitch 5.8s cubic-bezier(0.2, 0.9, 0.15, 1) infinite;
+}
+
+@keyframes aFlipGlitch {
+  0% { transform: translate3d(0,0,0) rotateX(0deg); filter: none; opacity: 1; }
+  82% { transform: translate3d(0,0,0) rotateX(0deg); filter: none; opacity: 1; }
+  86% { transform: translate3d(calc(var(--j) * 0.12px), 0, 0) rotateX(14deg); filter: saturate(1.2) contrast(1.1); opacity: 0.92; }
+  88% { transform: translate3d(calc(var(--j) * -0.18px), 0, 0) rotateX(-10deg); filter: saturate(1.1) contrast(1.2); opacity: 0.90; }
+  92% { transform: translate3d(0,0,0) rotateX(0deg); filter: none; opacity: 1; }
+  100% { transform: translate3d(0,0,0) rotateX(0deg); filter: none; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aText.glitchFlip .aTextChInner { animation: none; }
+}
+
 /* Portal zoom overlay */
 .portalOverlay {
   position: fixed;
