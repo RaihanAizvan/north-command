@@ -107,8 +107,6 @@ export default function AppLayout() {
     };
   }, [socket]);
 
-  if (!token) return <Outlet />;
-
   async function openDm(peer: Peer) {
     if (!token) return;
     if (!isDesktop) setMessagesOpen(true);
@@ -136,6 +134,8 @@ export default function AppLayout() {
       document.body.style.overflow = '';
     };
   }, [messagesOpen, notifOpen, drawerOpen, isMobile]);
+
+  if (!token) return <Outlet />;
 
   return (
     <div className="layout">
@@ -231,7 +231,13 @@ export default function AppLayout() {
                     >
                       Snow: {snow}
                     </button>
-                    <button className="userMenuItem" onClick={clear}>
+                    <button
+                      className="userMenuItem"
+                      onClick={() => {
+                        clear();
+                        nav('/');
+                      }}
+                    >
                       Sign out
                     </button>
                   </div>
@@ -372,6 +378,7 @@ export default function AppLayout() {
                 onClick={() => {
                   clear();
                   setDrawerOpen(false);
+                  nav('/');
                 }}
               >
                 Sign out
