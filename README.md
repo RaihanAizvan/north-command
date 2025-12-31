@@ -1,6 +1,12 @@
 ## NORTH-COMMAND
 
-NORTH-COMMAND is a realtime Santa’s Workshop operations console: Santa gets a commander overview, and elves get a focused task interface. Everything updates live (no refresh).
+NORTH-COMMAND is a realtime Santa’s operations console: Santa gets a commander overview, and elves get a focused task interface with realtime chat. Everything updates live (no refresh).
+
+## Live Deployment
+
+- **Client:** https://north-command-client.vercel.app  
+- **Server:** https://north-command.onrender.com
+
 
 ### Key features
 
@@ -13,7 +19,7 @@ NORTH-COMMAND is a realtime Santa’s Workshop operations console: Santa gets a 
   - Overseer (Santa) + Field Agent (Elf)
   - Logout returns to **`/`** (landing) reliably
 
-- **Task Management**
+- **Task Management** (mini github but for santa)
   - Santa can create and assign tasks
   - Elves can update progress and mark tasks complete
 
@@ -22,8 +28,9 @@ NORTH-COMMAND is a realtime Santa’s Workshop operations console: Santa gets a 
   - Direct messaging between Santa and elves
   - Broadcast-style updates and UI telemetry
 
-- **NorthBot (AI helper)**
-  - Chat assistant with Markdown-rendered replies (when configured)
+- **NorthBot (AI helperchatbot)**
+  - Santa isnt available all the time. So there is a AI helper for elfs. 
+  - Chat assistant with prompted gemini-2.5-flash api
 
 ### How it works (high level)
 
@@ -47,6 +54,7 @@ NORTH-COMMAND is a realtime Santa’s Workshop operations console: Santa gets a 
 ```bash
 docker compose up -d
 ```
+or clone the repo
 
 2) Install dependencies
 
